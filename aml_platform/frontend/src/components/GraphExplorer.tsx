@@ -2,43 +2,67 @@ import React, { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
 
 interface GraphExplorerProps {
-  data: any;
+  data: any[];
+  isFastMode?: boolean;
   onNodeClick?: (nodeId: string) => void;
 }
 
-export default function GraphExplorer({ data, onNodeClick }: GraphExplorerProps) {
+export default function GraphExplorer({ data, isFastMode = false, onNodeClick }: GraphExplorerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<any>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Logarithmic scaling for edge thickness
+    const elements = data.map(item => {
+      if (item.data.source && item.data.target) {
+        // Normalize edge thickness based on volume
+        const vol = item.data.volume || 1;
+        // log10 scale clamped between 1px and 12px
+        let thickness = Math.max(1, Math.min(12, Math.log10(vol) * 1.5)); 
+        return { ...item, data: { ...item.data, thickness: isFastMode ? thickness : 2 } };
+      }
+      return item;
+    });
+
     cyRef.current = cytoscape({
       container: containerRef.current,
-      elements: data,
+      elements: elements,
       style: [
         {
           selector: 'node',
           style: {
-            'background-color': '#2563eb',
-            'label': 'data(label)',
+            'background-color': (ele: any) => {
+              if (!isFastMode) return '#2563eb'; // Default blue
+              const status = ele.data('threshold_status');
+              if (status === 'RED') return '#ef4444'; // Red-500 exceeds alert
+              if (status === 'AMBER') return '#f59e0b'; // Amber-500 90% threshold
+              if (status === 'GREEN') return '#22c55e'; // Green-500 within range
+              return '#475569'; // Default missing scalar
+            },
+            'label': isFastMode ? '' : 'data(label)', // Hide labels in fast mode to focus on topology
             'color': '#fff',
             'font-size': '12px',
             'text-valign': 'center',
-            'width': 40,
-            'height': 40
+            'width': isFastMode ? 24 : 40,
+            'height': isFastMode ? 24 : 40,
+            // Add slight borders for visual separation in dense networks
+            'border-width': isFastMode ? 2 : 0,
+            'border-color': '#0f172a'
           }
         },
         {
           selector: 'edge',
           style: {
-            'width': 2,
-            'line-color': '#94a3b8',
-            'target-arrow-color': '#94a3b8',
+            'width': 'data(thickness)',
+            'line-color': isFastMode ? '#64748b' : '#94a3b8',
+            'target-arrow-color': isFastMode ? '#64748b' : '#94a3b8',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'label': 'data(amount_usd)',
-            'font-size': '10px'
+            'label': isFastMode ? '' : 'data(amount_usd)',
+            'font-size': '10px',
+            'opacity': isFastMode ? 0.7 : 1
           }
         },
         {
@@ -51,7 +75,10 @@ export default function GraphExplorer({ data, onNodeClick }: GraphExplorerProps)
       ],
       layout: {
         name: 'cose',
-        animate: true
+        animate: true,
+        // Optional: tweak layout parameters for denser graphs
+        nodeRepulsion: 400000,
+        idealEdgeLength: 50,
       }
     });
 
@@ -65,13 +92,13 @@ export default function GraphExplorer({ data, onNodeClick }: GraphExplorerProps)
         cyRef.current.destroy();
       }
     };
-  }, [data, onNodeClick]);
+  }, [data, isFastMode, onNodeClick]);
 
   return (
-    <div className="w-full h-full bg-slate-950 rounded-lg border border-slate-800 relative overflow-hidden">
+    <div className="w-full h-full bg-slate-950 rounded-xl border border-slate-800/80 shadow-inner relative overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
-      <div className="absolute top-4 left-4 bg-slate-900/80 p-2 rounded text-xs text-slate-300 border border-slate-700">
-        Investigator View: {data.length} elements
+      <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md p-2 rounded text-xs font-bold text-slate-300 border border-slate-700 shadow-xl">
+        {isFastMode ? 'FAST MODE (TOPOLOGY)' : 'FULL DISCOVERY'}: {data.length} elements
       </div>
     </div>
   );

@@ -16,14 +16,45 @@ import {
 } from 'lucide-react';
 
 const MOCK_DATA = [
-  { data: { id: 'ACC_SUSPECT_01', label: 'Suspect Entity' } },
-  { data: { id: 'ACC_02', label: 'Counterparty 1' } },
-  { data: { id: 'SWIFT-1', source: 'ACC_SUSPECT_01', target: 'ACC_02', amount_usd: '$15,000' } },
-  { data: { id: 'SWIFT-2', source: 'ACC_02', target: 'ACC_SUSPECT_01', amount_usd: '$14,000' } }
+  // --- CIRCULAR TOPOLOGY (Wash Trading / Tax Evasion) ---
+  { data: { id: 'CIRC_A', label: 'Offshore Trust', threshold_status: 'RED' } },
+  { data: { id: 'CIRC_B', label: 'Shell Co. A', threshold_status: 'AMBER' } },
+  { data: { id: 'CIRC_C', label: 'Shell Co. B', threshold_status: 'AMBER' } },
+  { data: { id: 'CIRC_D', label: 'Real Estate Holding', threshold_status: 'RED' } },
+  // Edges for Circular Flow (High Volume Loop will result in very thick connecting lines)
+  { data: { id: 'C_EDGE_1', source: 'CIRC_A', target: 'CIRC_B', amount_usd: '$5,000,000', volume: 5000000 } },
+  { data: { id: 'C_EDGE_2', source: 'CIRC_B', target: 'CIRC_C', amount_usd: '$4,950,000', volume: 4950000 } },
+  { data: { id: 'C_EDGE_3', source: 'CIRC_C', target: 'CIRC_D', amount_usd: '$4,900,000', volume: 4900000 } },
+  { data: { id: 'C_EDGE_4', source: 'CIRC_D', target: 'CIRC_A', amount_usd: '$4,800,000', volume: 4800000 } },
+
+  // --- SMURFING TOPOLOGY (Structuring / Micro-laundering) ---
+  { data: { id: 'AGGREGATOR', label: 'Suspect Aggregator', threshold_status: 'RED', type: 'SuperNode' } },
+  // The "Smurfs" (Low volume, high frequency, usually Green/Amber until aggregated)
+  { data: { id: 'SMURF_1', label: 'Retail Acc 1', threshold_status: 'GREEN' } },
+  { data: { id: 'SMURF_2', label: 'Retail Acc 2', threshold_status: 'GREEN' } },
+  { data: { id: 'SMURF_3', label: 'Retail Acc 3', threshold_status: 'GREEN' } },
+  { data: { id: 'SMURF_4', label: 'Retail Acc 4', threshold_status: 'GREEN' } },
+  { data: { id: 'SMURF_5', label: 'Retail Acc 5', threshold_status: 'AMBER' } },
+  { data: { id: 'SMURF_6', label: 'Retail Acc 6', threshold_status: 'AMBER' } },
+  // Edges for Smurfing (Low volume each, very thin, acting as a funnel to the aggregator)
+  { data: { id: 'S_EDGE_1', source: 'SMURF_1', target: 'AGGREGATOR', amount_usd: '$9,500', volume: 9500 } },
+  { data: { id: 'S_EDGE_2', source: 'SMURF_2', target: 'AGGREGATOR', amount_usd: '$9,800', volume: 9800 } },
+  { data: { id: 'S_EDGE_3', source: 'SMURF_3', target: 'AGGREGATOR', amount_usd: '$9,200', volume: 9200 } },
+  { data: { id: 'S_EDGE_4', source: 'SMURF_4', target: 'AGGREGATOR', amount_usd: '$9,900', volume: 9900 } },
+  { data: { id: 'S_EDGE_5', source: 'SMURF_5', target: 'AGGREGATOR', amount_usd: '$8,500', volume: 8500 } },
+  { data: { id: 'S_EDGE_6', source: 'SMURF_6', target: 'AGGREGATOR', amount_usd: '$9,100', volume: 9100 } },
+
+  // Aggregator passes it on to main holding (thicker connection)
+  { data: { id: 'MAIN_HOLDING', label: 'Main Account', threshold_status: 'RED' } },
+  { data: { id: 'S_EDGE_OUT', source: 'AGGREGATOR', target: 'MAIN_HOLDING', amount_usd: '$56,000', volume: 56000 } },
+  
+  // A connection between typologies to form a unified network view
+  { data: { id: 'LINK_EDGE', source: 'MAIN_HOLDING', target: 'CIRC_A', amount_usd: '$500,000', volume: 500000 } }
 ];
 
 export default function Dashboard() {
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [isFastMode, setIsFastMode] = useState<boolean>(false);
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-950 text-slate-100 font-sans">
@@ -118,87 +149,104 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content Workspace */}
-        <section className="flex-1 flex flex-col bg-slate-950 relative overflow-hidden">
-          {/* Subtle Grid Background */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <section className="flex-1 flex flex-col bg-slate-950 relative overflow-hidden py-4">
+          <div className="flex-1 mx-4 relative z-10 bg-slate-900/20 rounded-[2rem] border border-slate-800/80 shadow-2xl overflow-hidden group flex flex-col">
+            {/* Subtle Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
-          <div className="p-8 flex flex-col h-full relative z-10 overflow-y-auto">
-            {/* KPI Header */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
-              <KPICard 
-                title="Active Investigations" 
-                value="142" 
-                change="+12%" 
-                trend="up" 
-                icon={Search} 
-                color="blue"
-              />
-              <KPICard 
-                title="Critical Hits" 
-                value="28" 
-                change="+5.2%" 
-                trend="up" 
-                icon={AlertTriangle} 
-                color="red"
-              />
-              <KPICard 
-                title="Network Velocity" 
-                value="4,821" 
-                change="-2.1%" 
-                trend="neutral" 
-                icon={Activity} 
-                color="orange"
-              />
-              <KPICard 
-                title="Avg Resolution" 
-                value="4.2h" 
-                change="-12%" 
-                trend="down" 
-                icon={ShieldCheck} 
-                color="green"
-              />
-            </div>
+            {/* Top Workspace Bar & KPI Dock (Not Overlaid) */}
+            <div className="relative z-20 flex flex-col pointer-events-auto border-b border-slate-800/50 pb-2">
+              <div className="px-6 py-4 flex justify-between items-start">
+                <div className="flex flex-col items-start w-64 shrink-0">
+                  <div className="bg-slate-950/80 backdrop-blur-xl border border-slate-800/60 rounded-2xl px-5 py-3 shadow-xl">
+                    <h3 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Graph Network Voyager</h3>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 bg-slate-950/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800/50">
+                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Visualizing:</span>
+                    <span className="font-mono text-xs font-bold text-blue-400 truncate max-w-[120px]">{selectedEntity || 'Global Network View'}</span>
+                  </div>
+                </div>
+                
+                {/* Centered KPI Dock */}
+                <div className="flex-1 flex justify-center px-4">
+                  <div className="p-2 bg-slate-950/60 backdrop-blur-xl border border-slate-800/60 rounded-3xl shadow-lg flex items-stretch gap-2">
+                    <KPICard 
+                      title="Active Investigations" 
+                      value="142" 
+                      change="+12%" 
+                      trend="up" 
+                      icon={Search} 
+                      color="blue"
+                    />
+                    <KPICard 
+                      title="Critical Hits" 
+                      value="28" 
+                      change="+5.2%" 
+                      trend="up" 
+                      icon={AlertTriangle} 
+                      color="red"
+                    />
+                    <div className="w-px bg-slate-800/60 mx-1 my-3" />
+                    <KPICard 
+                      title="Network Velocity" 
+                      value="4,821" 
+                      change="-2.1%" 
+                      trend="neutral" 
+                      icon={Activity} 
+                      color="orange"
+                    />
+                    <KPICard 
+                      title="Avg Resolution" 
+                      value="4.2h" 
+                      change="-12%" 
+                      trend="down" 
+                      icon={ShieldCheck} 
+                      color="green"
+                    />
+                    <div className="w-px bg-slate-800/60 mx-1 my-3" />
+                    {/* Embedded Stats Container */}
+                    <div className="flex items-center gap-4 px-4">
+                       <div className="flex flex-col items-center justify-center">
+                          <span className="text-[9px] font-black text-slate-500 py-1 uppercase tracking-widest">Nodes</span>
+                          <span className="text-sm font-bold text-slate-200">12,402</span>
+                       </div>
+                       <div className="flex flex-col items-center justify-center">
+                          <span className="text-[9px] font-black text-slate-500 py-1 uppercase tracking-widest">Edges</span>
+                          <span className="text-sm font-bold text-slate-200">88,291</span>
+                       </div>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Workspace Title */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-xl font-bold tracking-tight">Graph Network Voyager</h3>
-                <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
-                  Visualizing: <span className="font-mono text-blue-400">{selectedEntity || 'Global Network'}</span>
+                <div className="flex gap-3 bg-slate-950/80 backdrop-blur-xl p-1.5 rounded-2xl border border-slate-800/60 shadow-xl w-64 justify-end shrink-0">
+                  <div className="flex bg-slate-900/50 p-1 rounded-xl">
+                     <button 
+                       onClick={() => setIsFastMode(false)}
+                       className={`px-5 py-2 rounded-lg text-xs font-bold transition-all shadow-lg ${!isFastMode ? 'bg-blue-600 text-white shadow-blue-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+                     >
+                       Full Discovery
+                     </button>
+                     <button 
+                       onClick={() => setIsFastMode(true)}
+                       className={`px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-lg ${isFastMode ? 'bg-indigo-600 text-white shadow-indigo-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+                     >
+                       Fast Mode
+                     </button>
+                  </div>
+                  <button className="p-3 bg-slate-900/50 rounded-xl hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700">
+                    <BarChart3 size={18} className="text-slate-300" />
+                  </button>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <div className="flex bg-slate-900/50 p-1 rounded-lg border border-slate-800">
-                   <button className="px-3 py-1 rounded-md text-[10px] font-bold bg-slate-800 text-white">Full Discovery</button>
-                   <button className="px-3 py-1 rounded-md text-[10px] font-bold text-slate-500 hover:text-slate-300">Fast Mode</button>
-                </div>
-                <button className="p-2 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors">
-                  <BarChart3 size={16} className="text-slate-400" />
-                </button>
               </div>
             </div>
             
-            {/* Graph Container */}
-            <div className="flex-1 min-h-[400px] bg-slate-900/30 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-sm group">
+            <div className="flex-1 w-full relative z-10">
               <GraphExplorer 
                 data={MOCK_DATA} 
+                isFastMode={isFastMode}
                 onNodeClick={(id) => setSelectedEntity(id)}
               />
-              
-              {/* Floating Overlays */}
-              <div className="absolute bottom-6 left-6 p-4 bg-slate-950/80 backdrop-blur-md rounded-xl border border-slate-800 flex items-center gap-6 shadow-2xl">
-                 <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Nodes Found</span>
-                    <span className="text-sm font-bold">12,402</span>
-                 </div>
-                 <div className="w-px h-8 bg-slate-800" />
-                 <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Edges Traced</span>
-                    <span className="text-sm font-bold">88,291</span>
-                 </div>
-              </div>
             </div>
           </div>
         </section>
