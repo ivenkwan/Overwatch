@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GraphExplorer from '@/components/GraphExplorer';
 import { KPICard } from '@/components/KPICard';
 import { 
@@ -16,8 +16,11 @@ import {
   Briefcase,
   FileText,
   Target,
-  Share2
+  Share2,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
+import { api } from '@/services/api';
 
 import MonitoringFeed from '@/components/modules/MonitoringFeed';
 import AlertWorkbench from '@/components/modules/AlertWorkbench';
@@ -26,47 +29,32 @@ import STRPreparation from '@/components/modules/STRPreparation';
 import ScreeningModule from '@/components/modules/ScreeningModule';
 import GovernanceMIS from '@/components/modules/GovernanceMIS';
 
-const MOCK_DATA = [
-  // --- CIRCULAR TOPOLOGY (Wash Trading / Tax Evasion) ---
-  { data: { id: 'CIRC_A', label: 'Offshore Trust', threshold_status: 'RED' } },
-  { data: { id: 'CIRC_B', label: 'Shell Co. A', threshold_status: 'AMBER' } },
-  { data: { id: 'CIRC_C', label: 'Shell Co. B', threshold_status: 'AMBER' } },
-  { data: { id: 'CIRC_D', label: 'Real Estate Holding', threshold_status: 'RED' } },
-  // Edges for Circular Flow (High Volume Loop will result in very thick connecting lines)
-  { data: { id: 'C_EDGE_1', source: 'CIRC_A', target: 'CIRC_B', amount_usd: '$5,000,000', volume: 5000000 } },
-  { data: { id: 'C_EDGE_2', source: 'CIRC_B', target: 'CIRC_C', amount_usd: '$4,950,000', volume: 4950000 } },
-  { data: { id: 'C_EDGE_3', source: 'CIRC_C', target: 'CIRC_D', amount_usd: '$4,900,000', volume: 4900000 } },
-  { data: { id: 'C_EDGE_4', source: 'CIRC_D', target: 'CIRC_A', amount_usd: '$4,800,000', volume: 4800000 } },
-
-  // --- SMURFING TOPOLOGY (Structuring / Micro-laundering) ---
-  { data: { id: 'AGGREGATOR', label: 'Suspect Aggregator', threshold_status: 'RED', type: 'SuperNode' } },
-  // The "Smurfs" (Low volume, high frequency, usually Green/Amber until aggregated)
-  { data: { id: 'SMURF_1', label: 'Retail Acc 1', threshold_status: 'GREEN' } },
-  { data: { id: 'SMURF_2', label: 'Retail Acc 2', threshold_status: 'GREEN' } },
-  { data: { id: 'SMURF_3', label: 'Retail Acc 3', threshold_status: 'GREEN' } },
-  { data: { id: 'SMURF_4', label: 'Retail Acc 4', threshold_status: 'GREEN' } },
-  { data: { id: 'SMURF_5', label: 'Retail Acc 5', threshold_status: 'AMBER' } },
-  { data: { id: 'SMURF_6', label: 'Retail Acc 6', threshold_status: 'AMBER' } },
-  // Edges for Smurfing (Low volume each, very thin, acting as a funnel to the aggregator)
-  { data: { id: 'S_EDGE_1', source: 'SMURF_1', target: 'AGGREGATOR', amount_usd: '$9,500', volume: 9500 } },
-  { data: { id: 'S_EDGE_2', source: 'SMURF_2', target: 'AGGREGATOR', amount_usd: '$9,800', volume: 9800 } },
-  { data: { id: 'S_EDGE_3', source: 'SMURF_3', target: 'AGGREGATOR', amount_usd: '$9,200', volume: 9200 } },
-  { data: { id: 'S_EDGE_4', source: 'SMURF_4', target: 'AGGREGATOR', amount_usd: '$9,900', volume: 9900 } },
-  { data: { id: 'S_EDGE_5', source: 'SMURF_5', target: 'AGGREGATOR', amount_usd: '$8,500', volume: 8500 } },
-  { data: { id: 'S_EDGE_6', source: 'SMURF_6', target: 'AGGREGATOR', amount_usd: '$9,100', volume: 9100 } },
-
-  // Aggregator passes it on to main holding (thicker connection)
-  { data: { id: 'MAIN_HOLDING', label: 'Main Account', threshold_status: 'RED' } },
-  { data: { id: 'S_EDGE_OUT', source: 'AGGREGATOR', target: 'MAIN_HOLDING', amount_usd: '$56,000', volume: 56000 } },
-  
-  // A connection between typologies to form a unified network view
-  { data: { id: 'LINK_EDGE', source: 'MAIN_HOLDING', target: 'CIRC_A', amount_usd: '$500,000', volume: 500000 } }
-];
-
 export default function Dashboard() {
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
   const [isFastMode, setIsFastMode] = useState<boolean>(false);
   const [activeModule, setActiveModule] = useState<string>('NETWORK');
+
+  const [graphData, setGraphData] = useState<any[]>([]);
+  const [isGraphLoading, setIsGraphLoading] = useState(true);
+  const [graphError, setGraphError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    api.fetchGraphNetwork()
+      .then(res => {
+        if (isMounted) {
+          setGraphData(res.elements);
+          setIsGraphLoading(false);
+        }
+      })
+      .catch(err => {
+        if (isMounted) {
+          setGraphError(err.message);
+          setIsGraphLoading(false);
+        }
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-950 text-slate-100 font-sans">
@@ -171,12 +159,26 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="flex-1 w-full relative z-10">
-                <GraphExplorer 
-                  data={MOCK_DATA} 
-                  isFastMode={isFastMode}
-                  onNodeClick={(id) => setSelectedEntity(id)}
-                />
+              <div className="flex-1 w-full relative z-10 flex flex-col">
+                {isGraphLoading ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                    <Loader2 className="w-12 h-12 animate-spin text-blue-500 mb-4" />
+                    <p className="font-bold">Projecting Network Topology...</p>
+                    <p className="text-xs opacity-70 mt-2">Loading Apache AGE graph from backend</p>
+                  </div>
+                ) : graphError ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-rose-400">
+                    <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
+                    <p className="font-bold">Graph Projection Failed</p>
+                    <p className="text-xs opacity-70 mt-2">{graphError}</p>
+                  </div>
+                ) : (
+                  <GraphExplorer 
+                    data={graphData} 
+                    isFastMode={isFastMode}
+                    onNodeClick={(id) => setSelectedEntity(id)}
+                  />
+                )}
               </div>
             </div>
 

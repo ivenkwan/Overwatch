@@ -1,45 +1,22 @@
 version: '3.8'
 
 services:
-  # 1. Database: PostgreSQL with Apache AGE
-  aml-db:
-    image: apache/age:latest
-    container_name: aml-postgres-age
-    environment:
-      POSTGRES_USER: aml_admin
-      POSTGRES_PASSWORD: secure_password_123
-      POSTGRES_DB: aml_platform
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./init-scripts:/docker-entrypoint-initdb.d
-      - aml_pgdata:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aml_admin -d aml_platform"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - aml-network
-
-  # 2. Backend: Modular FastAPI App
+  # Backend: Modular FastAPI App
   aml-backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: aml-fastapi-backend
     environment:
-      DATABASE_URL: postgresql://aml_admin:secure_password_123@aml-db:5432/aml_platform
+      # Use host.docker.internal to bridge to the ETL age_db container running on 5433
+      DATABASE_URL: postgresql://postgres:password@host.docker.internal:5433/age_prod_01
       ENV: production
     ports:
       - "8000:8000"
-    depends_on:
-      aml-db:
-        condition: service_healthy
     restart: unless-stopped
     networks:
       - aml-network
+
 
   # 3. Frontend: Next.js App
   aml-frontend:

@@ -44,28 +44,10 @@ Function Wait-For-Http {
 }
 
 Function Check-Services {
-    # Check Database via Docker Healthcheck
-    Write-Host "`nChecking Database container health..." -NoNewline
-    $dbIsHealthy = $false
-    for ($i = 0; $i -lt 15; $i++) {
-        try {
-            $dbHealth = (docker inspect --format="{{json .State.Health.Status}}" aml-postgres-age 2>$null).Trim('"')
-            if ($dbHealth -eq "healthy") {
-                $dbIsHealthy = $true
-                break
-            }
-        } catch {}
-        Write-Host "." -NoNewline
-        Start-Sleep -Seconds 2
-    }
+    # Note: Database Healthcheck is now delegated to docker-compose.etl.yml.
+    # The manage_aml_services.ps1 assumes age_db is already running upstream.
+    Write-Host "`nAssuming Database container is managed upstream..." -ForegroundColor Green
 
-    if (-not $dbIsHealthy) {
-        Write-Host " [FAILED] (Database did not become healthy)" -ForegroundColor Red
-        return $false
-    } else {
-        Write-Host " [OK]" -ForegroundColor Green
-    }
-    
     # Check Backend
     # Fast API default docs are at /docs, or root / might return 404 but server is up. 
     $backendUp = Wait-For-Http -Url "http://localhost:8000/docs" -ServiceName "Backend API" -TimeoutSeconds 60

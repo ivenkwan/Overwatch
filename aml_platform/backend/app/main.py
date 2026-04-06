@@ -1,10 +1,30 @@
 from fastapi import FastAPI
 from app.api.v1 import alerts, graph, auth, admin, reports
+from contextlib import asynccontextmanager
+from app.db.session import init_db_pool, close_db_pool
+from fastapi.middleware.cors import CORSMiddleware
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await init_db_pool()
+    yield
+    # Shutdown
+    await close_db_pool()
 
 app = FastAPI(
     title="Overwatch AML Platform",
     description="Unified TradFi and Web3 Fund Flow Analysis Engine",
-    version="2.0.0"
+    version="2.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # for local dev
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include Routers

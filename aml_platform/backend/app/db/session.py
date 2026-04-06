@@ -1,62 +1,31 @@
 import os
-import psycopg2
-from psycopg2 import pool
-from contextlib import contextmanager
+import asyncpg
+from typing import AsyncGenerator
 
-# Configuration (to be moved to core/config.py)
-database_url = os.environ.get("DATABASE_URL")
+# Point to the container age_db if inside Docker, or localhost:5433 if running on host
+database_url = os.environ.get("DATABASE_URL", "postgresql://postgres:password@localhost:5433/age_prod_01")
 
-if database_url:
-    relational_pool = psycopg2.pool.SimpleConnectionPool(1, 10, dsn=database_url)
-    graph_pool = psycopg2.pool.SimpleConnectionPool(1, 5, dsn=database_url)
-else:
-    DB_CONFIG = {
-        "host": "localhost",
-        "port": 5432,
-        "database": "aml_platform",
-        "user": "aml_admin", 
-        "password": "secure_password_123"
-    }
+class DatabaseState:
+    pool: asyncpg.Pool = None
 
-    # Dedicated Pools as suggested by the Skeptic
-    relational_pool = psycopg2.pool.SimpleConnectionPool(1, 10, **DB_CONFIG)
-    graph_pool = psycopg2.pool.SimpleConnectionPool(1, 5, **DB_CONFIG)
+db_state = DatabaseState()
 
-@contextmanager
-def get_relational_connection():
-    conn = relational_pool.getconn()
-    try:
+async def init_db_pool():
+    db_state.pool = await asyncpg.create_pool(
+        dsn=database_url,
+        min_size=2,
+        max_size=20,
+        server_settings={'search_path': 'ag_catalog, "$user", public'}
+    )
+
+async def close_db_pool():
+    if db_state.pool is not None:
+        await db_state.pool.close()
+
+async def get_db() -> AsyncGenerator[asyncpg.Connection, None]:
+    """Dependency injection wrapper yielding an asyncpg connection from the pool."""
+    if db_state.pool is None:
+        raise RuntimeError("Database pool has not been initialized.")
+    
+    async with db_state.pool.acquire() as conn:
         yield conn
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        relational_pool.putconn(conn)
-
-@contextmanager
-def get_graph_connection():
-    conn = graph_pool.getconn()
-    try:
-        # Load Apache AGE context
-        with conn.cursor() as cur:
-            cur.execute("LOAD 'age';")
-            cur.execute("SET search_path = ag_catalog, public;")
-        yield conn
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        graph_pool.putconn(conn)
-
-def get_db():
-    conn = relational_pool.getconn()
-    try:
-        yield conn
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        relational_pool.putconn(conn)
