@@ -247,11 +247,119 @@ The home page should be simple and supervisory:
 - Data-quality exceptions in critical data elements.
 - Trigger-event review status for new products and recent tuning changes. This aligns closely with HKMA’s focus on alert volumes, productive cases, STR rates, data quality, and periodic optimization.
 
-If you want, I can turn this into a one-page target operating model with:
+# One-page target operating model with AML Dashboard
+Use as a design brief for an AML operations dashboard in Hong Kong covering fiat and stablecoin monitoring, alert handling, case management, and STR reporting. It is aligned to HKMA’s transaction monitoring and STR guidance and JFIU’s STREAMS 2 reporting expectations.[^1][^2]
 
-1. dashboard wireframe,
-2. KPI dictionary with formulas and thresholds, and
-3. HKMA/JFIU control-to-screen mapping matrix
+## Operating model
+
+The target operating model should run as a single end-to-end workflow: detect suspicious activity, review alerts against customer context, escalate linked items into a case, and produce structured STRs with full audit trail and Hong Kong-specific reporting fields. HKMA expects monitoring systems to generate alerts or MIS reports, require documented review and rationale, support periodic tuning and governance, and produce timely, accurate STRs; JFIU requires STRs to be submitted electronically through STREAMS 2.[^2][^1]
+
+
+| Layer | Purpose | Key owner | Core outputs |
+| :-- | :-- | :-- | :-- |
+| Detection | Monitor fiat, stablecoin, and hybrid typologies across accounts and wallets [^1] | AML monitoring team [^1] | Alerts, risk scores, scenario hits [^1] |
+| Review | Investigate alert background, customer profile, source/destination, and explanation [^1][^2] | L1 / L2 investigators [^1] | Closed alert, escalated alert, RFI, EDD trigger [^1] |
+| Case | Group related customers, accounts, wallets, devices, and counterparties into one investigation [^1] | FIU / investigations [^1] | Case file, network view, disposition [^1] |
+| Reporting | Draft and submit STR with structured narrative and digital footprint fields [^1][^2] | MLRO / authorized approver [^1] | STREAMS 2 STR, supplementary STR [^1][^2] |
+| Governance | Tune thresholds, manage backlogs, QA reviews, and committee reporting [^1] | AML governance / committee [^1] | KPI pack, tuning proposals, QA findings [^1] |
+
+## Dashboard wireframe
+
+The dashboard should be one screen with role-based sections: executive oversight on top, operational queues in the middle, and drill-through investigation panels below. HKMA expects management oversight of system effectiveness, exception handling, backlog escalation, and KPI-based periodic review, so the wireframe should make those items visible without requiring separate reports.[^1]
+
+```text
++--------------------------------------------------------------------------------------------------+
+| AML Monitoring TOM – Hong Kong (Fiat + Stablecoin)                                               |
+| Date | Entity | Business line | Segment | Theme toggle | Export MIS | Committee pack             |
++--------------------------------------------------------------------------------------------------+
+| KPI STRIP                                                                                         |
+| Open Alerts | Alerts > SLA | Open Cases | Pending STR | STR Conv % | False Pos % | Data Issues  |
++--------------------------------------------------------------------------------------------------+
+| RISK & FLOW OVERVIEW                                                                              |
+| Alerts by type: Fiat | Stablecoin | Hybrid        Top typologies        High-risk corridors      |
+| Trend: 30d alerts / productive cases / STRs             Stablecoin mint-redeem / in-out trend    |
++--------------------------------------------------------------------------------------------------+
+| ALERT WORKBENCH                                  | SCREENING & EXCEPTIONS                         |
+| Queue by priority / age / scenario / analyst     | Sanctions/name hits                           |
+| Selected alert:                                  | Wallet blacklist hits                          |
+| - customer profile                               | Data lineage / failed ingestion               |
+| - account + wallet activity                      | Model/rule test failures                       |
+| - prior alerts / prior STR refs                  |                                                |
+| - IP / device / geo / channel                    |                                                |
+| Decision: Close | Escalate | RFI | EDD | Hold    |                                                |
++--------------------------------------------------------------------------------------------------+
+| CASE DESK                                        | STR DRAFTING                                   |
+| Related entities graph                           | Triggering factors                              |
+| Timeline of transactions / notes / approvals     | Subject background                              |
+| Linked accounts / wallets / devices              | Transactions & suspicious indicators            |
+| Actions: freeze? exit? monitor?                  | Digital footprints / attachments / XML/PDF      |
++--------------------------------------------------------------------------------------------------+
+| GOVERNANCE & TUNING                                                                              |
+| Scenario effectiveness | Threshold review due | Backlog ageing | QA sample fail | Committee log  |
++--------------------------------------------------------------------------------------------------+
+```
+
+The operational drill-through should let users pivot from account to wallet to device to counterparty because HKMA expects alert review to use CDD profiles, prior alerts, open-source checks, and linked information, and its STR guidance says related networks and common attributes such as IP addresses and device IDs should be reported where reasonably practicable.[^1]
+
+## KPI dictionary
+
+The KPI set should balance effectiveness, efficiency, timeliness, data quality, and STR quality rather than focusing only on alert volume. HKMA says transaction monitoring systems should have defined objectives and KPIs, and its 2024 insight paper highlights tuning reports driven by active customers, alerts, productive cases, and STR conversion rate.[^2][^1]
+
+
+| KPI | Formula | Suggested threshold | Why it matters |
+| :-- | :-- | :-- | :-- |
+| Alert rate | Total alerts / active customers or active monitored relationships x 1,000 [^2][^1] | Track by segment; investigate if variance > 20% month-on-month [^2] | Shows whether scenario coverage is proportionate to exposure [^1] |
+| Productive alert rate | Alerts escalated to case / total reviewed alerts [^2] | Amber < 10%, red < 5% unless justified by low-risk portfolio [^2][^3] | Measures signal quality and scenario usefulness [^2] |
+| False positive rate | Closed-as-non-suspicious alerts / total reviewed alerts [^1][^2] | Amber > 90%, red > 95% for mature scenarios [^3][^1] | HKMA expects efficiency and tuning to reduce unnecessary alerts [^1] |
+| STR conversion rate | STRs filed / cases closed, or STRs filed / reviewed productive cases [^2] | Amber < 10%, red < 5% unless typology-specific rationale exists [^2][^3] | Explicitly cited by HKMA as a tuning KPI [^2] |
+| First-review SLA | Alerts reviewed within SLA / total alerts [^1] | Green ≥ 95% within internal SLA [^1] | HKMA requires clear timelines and backlog management [^1] |
+| Backlog ageing | Alerts over SLA / total open alerts [^1] | Amber > 10%, red > 20% [^1] | Significant overdue alerts should be escalated to management [^1] |
+| Case cycle time | Avg days from case open to disposition [^1] | Target by typology, with 80th percentile tracked [^1] | Measures investigation efficiency and resource adequacy [^1] |
+| STR timeliness | Avg days from suspicion formed to STR submission [^2][^1] | Green: as soon as practicable; internal target typically 1–3 business days after decision [^2][^1] | JFIU requires reporting as soon as practicable; HKMA expects prompt handling [^2][^1] |
+| STR completeness | STRs with mandatory fields completed / total STRs [^1][^2] | Green ≥ 99% [^1][^2] | HKMA and JFIU both stress completeness of required information [^1][^2] |
+| Digital footprint inclusion | Relevant cyber-enabled STRs with IP/device/time/geo included / total cyber-enabled STRs [^1] | Green ≥ 90% where data is available [^1] | HKMA expects digital footprints to be included where relevant and available [^1] |
+| Editable transaction attachment rate | STRs with editable schedules / total STRs with transaction annexures [^1] | Green ≥ 95% [^1] | HKMA discourages non-editable transaction records [^1] |
+| Data quality exception rate | Failed critical data checks / total critical records ingested [^1] | Amber > 1%, red > 3% [^1] | Accurate data and lineage are prerequisites for effective monitoring [^1] |
+| Scenario review coverage | Scenarios reviewed in period / total active scenarios [^1] | Green 100% annually; higher-risk scenarios quarterly [^1][^2] | HKMA expects periodic review of parameters, thresholds, and outcomes [^1] |
+| QA clearance defect rate | QA exceptions on alert closures / QA sample reviewed [^1] | Amber > 5%, red > 10% [^1] | HKMA expects independent assurance of alert clearance quality [^1] |
+| Screening false positive rate | Screening non-hits / total screening alerts [^1] | Track by list and identifier type; tune if persistently excessive [^1] | HKMA requires balancing screening effectiveness and efficiency [^1] |
+
+The thresholds above are a practical starting point rather than statutory limits, because HKMA does not prescribe universal numeric thresholds and instead expects institution-specific calibration based on risk profile, customer segmentation, and testing results. Any red or amber threshold should therefore be approved through the AML governance process and adjusted by business line, product type, and stablecoin risk typology.[^2][^1]
+
+## Control-to-screen mapping
+
+The control-to-screen mapping should prove that each Hong Kong regulatory expectation is visible in the user interface, not hidden in procedures. HKMA expects institutions to evidence oversight, documentation, data quality, threshold tuning, and STR quality, while JFIU expects structured STR information, reasons for suspicion, customer explanation if any, and electronic filing via STREAMS 2.[^1][^2]
+
+
+| Regulatory expectation | Control objective | Screen / widget | Required fields / actions |
+| :-- | :-- | :-- | :-- |
+| HKMA TM system produces alerts or MIS reports [^1] | Detect suspicious or abnormal patterns across products and channels [^1] | Risk \& Flow Overview; Alert Workbench | Scenario ID, alert timestamp, channel, fiat/stablecoin flag, score |
+| HKMA alert review must examine background, purpose, customer profile, and document rationale [^1] | Ensure every closure or escalation is evidence-based [^1] | Alert detail panel | CDD profile, prior alerts, customer explanation, open-source checks, closure rationale |
+| HKMA requires segmentation, thresholds, and testing [^1] | Tune scenarios by risk segment and product [^1] | Governance \& Tuning | Segment, threshold set, last tuned date, test result, approver |
+| HKMA requires data integrity, quality, and lineage testing [^1] | Prevent false alerts or missed alerts caused by bad data [^1] | Data Issues widget | Source system, failed field, exception volume, remediation owner |
+| HKMA requires timelines, triage, backlog escalation [^1] | Maintain timely review and escalate overdue work [^1] | KPI strip; queue ageing panel | Age buckets, owner, escalation status, committee flag |
+| HKMA requires independent QA of alert clearance [^1] | Validate consistency and quality of analyst decisions [^1] | Governance \& Tuning | QA sample, exception type, analyst, remediation action |
+| HKMA screening systems need current databases, tuning, and alert handling [^1] | Manage sanctions/name/wallet-list monitoring effectively [^1] | Screening \& Exceptions | List source, update time, hit status, false-positive trend, escalation notes |
+| HKMA STRs must be accurate, complete, structured, and concise [^1] | Improve intelligence value of filings [^1] | STR Drafting | Triggering factors, subject profile, transaction summary, conclusion, next steps |
+| HKMA encourages digital footprints where relevant and available [^1] | Capture cyber-enabled evidence for online and wallet activity [^1] | STR Drafting; Case Desk | IP, device ID, timestamps, geolocation, login channel |
+| HKMA says attachments should supplement narratives and transaction files should be editable [^1] | Make STRs more usable by JFIU [^1] | STR Drafting | Narrative text box, editable CSV/XLS attachment, document type labels |
+| HKMA says connected networks and common attributes should be reported where practicable [^1] | Present linked accounts, wallets, devices, and counterparties in one case [^1] | Case Desk graph | Linked entities, common IP/device, prior STR refs, relationship type |
+| JFIU SAFE approach: Screen, Ask, Find, Evaluate [^2] | Enforce disciplined suspicion assessment [^2] | Alert detail workflow | Suspicious indicator, customer question log, internal record review, investigator evaluation |
+| JFIU says report when knowledge or suspicion exists as soon as practicable [^2] | Prevent delayed filing [^2] | KPI strip; STR queue | Suspicion date, filing due clock, approver SLA |
+| JFIU STREAMS 2 electronic submission only for regulated entities [^2] | Ensure filing readiness and channel control [^2] | STR Drafting | XML/PDF/web-form output status, e-cert readiness, submission reference |
+| JFIU requires personal/company particulars, suspicious activity details, reasons, and explanation if any [^2] | Ensure base reporting completeness [^2] | STR Drafting mandatory fields | Name, ID, DOB/incorporation, address, account number, suspicious facts, explanation |
+
+## Fiat and stablecoin design rules
+
+The same operating model should support both bank-led fiat activity and wallet-led stablecoin activity, but the data model should distinguish account events from on-chain events. HKMA’s guidance emphasizes that monitoring design must reflect the institution’s own risks, products, services, and emerging typologies, and it encourages use of external and supplementary data to improve targeting.[^1]
+
+For that reason, every alert and case object should include a unified entity spine with customer, account, wallet, device, IP, counterparty, jurisdiction, chain, token, and source-of-funds/source-of-wealth fields. That design supports hybrid patterns such as fiat inflow to account, rapid conversion to stablecoin, onward transfer to multiple wallets, and later redemption or off-ramping, while still feeding a single STR narrative and a single governance pack.[^1]
+
+## Decision rights
+
+A clear approval model is part of the target operating model because HKMA repeatedly emphasizes governance, oversight, and documented justification for major decisions. The most practical setup is L1 analysts close or escalate low-complexity alerts, L2 investigators own cases and high-risk stablecoin patterns, the MLRO approves STR filing and supplementary STRs, and the AML committee approves material scenario changes, tuning outcomes, and remediation of significant backlog or data-quality issues.[^2][^1]
+
+
 <span style="display:none"></span>
 
-<div align="center">⁂</div>
+<div align="center"></div>
