@@ -42,7 +42,7 @@ graph TD
 - Key operational features include automated SQL initializations, database connection pool monitoring, and a Dead Letter Queue (DLQ) for failed data ingestion triage.
 
 
-## AML Dashboard
+## 4. AML Dashboard
 A practical AML dashboard for Hong Kong should be built as a workflow dashboard, not just a monitoring screen: detect unusual fiat and stablecoin activity, route alerts through tiered review, escalate into cases, and produce JFIU-ready STR narratives with full audit trail and management oversight. HKMA expects transaction monitoring to cover alert generation, alert review with documented rationale, periodic tuning, KPI-based oversight, data-quality controls, and timely suspicious transaction reporting, while STRs should be accurate, complete, structured, and include relevant digital footprints where available.[^1][^2]
 
 ## Dashboard modules
