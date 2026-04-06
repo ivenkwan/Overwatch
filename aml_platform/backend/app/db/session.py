@@ -1,19 +1,26 @@
+import os
 import psycopg2
 from psycopg2 import pool
 from contextlib import contextmanager
 
 # Configuration (to be moved to core/config.py)
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "aml_platform",
-    "user": "aml_admin", 
-    "password": "secure_password_123"
-}
+database_url = os.environ.get("DATABASE_URL")
 
-# Dedicated Pools as suggested by the Skeptic
-relational_pool = psycopg2.pool.SimpleConnectionPool(1, 10, **DB_CONFIG)
-graph_pool = psycopg2.pool.SimpleConnectionPool(1, 5, **DB_CONFIG)
+if database_url:
+    relational_pool = psycopg2.pool.SimpleConnectionPool(1, 10, dsn=database_url)
+    graph_pool = psycopg2.pool.SimpleConnectionPool(1, 5, dsn=database_url)
+else:
+    DB_CONFIG = {
+        "host": "localhost",
+        "port": 5432,
+        "database": "aml_platform",
+        "user": "aml_admin", 
+        "password": "secure_password_123"
+    }
+
+    # Dedicated Pools as suggested by the Skeptic
+    relational_pool = psycopg2.pool.SimpleConnectionPool(1, 10, **DB_CONFIG)
+    graph_pool = psycopg2.pool.SimpleConnectionPool(1, 5, **DB_CONFIG)
 
 @contextmanager
 def get_relational_connection():
@@ -42,3 +49,14 @@ def get_graph_connection():
         raise
     finally:
         graph_pool.putconn(conn)
+
+def get_db():
+    conn = relational_pool.getconn()
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        relational_pool.putconn(conn)

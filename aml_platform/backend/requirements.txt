@@ -4,3 +4,7 @@ psycopg2-binary
 pydantic
 requests
 python-dotenv
+PyJWT
+passlib[bcrypt]
+python-multipart
+email-validator
