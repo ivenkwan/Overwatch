@@ -1,7 +1,8 @@
 param (
     [switch]$Start,
     [switch]$Stop,
-    [switch]$Restart
+    [switch]$Restart,
+    [switch]$Rebuild
 )
 
 $ErrorActionPreference = "Stop"
@@ -89,21 +90,24 @@ if ($Stop) {
     exit 0
 }
 
-if (-not $Start -and -not $Restart) {
-    Write-Host "Usage: .\manage_aml_services.ps1 [-Start | -Stop | -Restart]"
+if (-not $Start -and -not $Restart -and -not $Rebuild) {
+    Write-Host "Usage: .\manage_aml_services.ps1 [-Start | -Stop | -Restart | -Rebuild]"
     Write-Host "Example: .\manage_aml_services.ps1 -Start"
     exit 1
 }
 
-if ($Restart) {
+if ($Rebuild) {
+    Write-Host "Rebuilding AML Platform Services..." -ForegroundColor Cyan
+    docker-compose down
+    docker-compose up -d --build
+} elseif ($Restart) {
     Write-Host "Restarting AML Platform Services..." -ForegroundColor Cyan
     docker-compose down
+    docker-compose up -d
 } else {
     Write-Host "Starting AML Platform Services (Normal Startup)..." -ForegroundColor Cyan
+    docker-compose up -d
 }
-
-# Initial attempt to start normally
-docker-compose up -d
 
 # Check if everything came up properly
 $allHealthy = Check-Services
