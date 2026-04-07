@@ -17,11 +17,11 @@ export default function GraphExplorer({ data, isFastMode = false, onNodeClick }:
     // Logarithmic scaling for edge thickness
     const elements = data.map(item => {
       if (item.data.source && item.data.target) {
-        // Normalize edge thickness based on volume
-        const vol = item.data.volume || 1;
+        // Normalize edge thickness based on volume or amount
+        const vol = item.data.volume || item.data.amount_usd || item.data.amount || 1;
         // log10 scale clamped between 1px and 12px
-        let thickness = Math.max(1, Math.min(12, Math.log10(vol) * 1.5)); 
-        return { ...item, data: { ...item.data, thickness: isFastMode ? thickness : 2 } };
+        let thickness = Math.max(1, Math.min(12, Math.log10(vol) * 1.2)); 
+        return { ...item, data: { ...item.data, thickness: isFastMode ? thickness : Math.max(2, thickness) } };
       }
       return item;
     });
@@ -34,20 +34,31 @@ export default function GraphExplorer({ data, isFastMode = false, onNodeClick }:
           selector: 'node',
           style: {
             'background-color': (ele: any) => {
-              if (!isFastMode) return '#2563eb'; // Default blue
+              if (!isFastMode) {
+                 const risk = ele.data('risk_score') || 0;
+                 if (risk >= 80) return '#ef4444'; // High Risk (Red)
+                 if (risk >= 50) return '#f59e0b'; // Medium (Amber)
+                 return '#3b82f6'; // Default (Blue)
+              }
               const status = ele.data('threshold_status');
-              if (status === 'RED') return '#ef4444'; // Red-500 exceeds alert
-              if (status === 'AMBER') return '#f59e0b'; // Amber-500 90% threshold
-              if (status === 'GREEN') return '#22c55e'; // Green-500 within range
-              return '#475569'; // Default missing scalar
+              if (status === 'RED') return '#ef4444';
+              if (status === 'AMBER') return '#f59e0b';
+              if (status === 'GREEN') return '#22c55e';
+              return '#475569';
             },
-            'label': isFastMode ? '' : 'data(label)', // Hide labels in fast mode to focus on topology
+            'shape': (ele: any) => {
+              const lbl = ele.data('label');
+              if (lbl === 'Person' || lbl === 'Individual') return 'ellipse';
+              if (lbl === 'Company' || lbl === 'Business' || lbl === 'Entity') return 'round-rectangle';
+              if (lbl === 'Account' || lbl === 'Wallet') return 'hexagon';
+              return 'ellipse';
+            },
+            'label': isFastMode ? '' : 'data(label)',
             'color': '#fff',
             'font-size': '12px',
             'text-valign': 'center',
             'width': isFastMode ? 24 : 40,
             'height': isFastMode ? 24 : 40,
-            // Add slight borders for visual separation in dense networks
             'border-width': isFastMode ? 2 : 0,
             'border-color': '#0f172a'
           }
@@ -56,8 +67,18 @@ export default function GraphExplorer({ data, isFastMode = false, onNodeClick }:
           selector: 'edge',
           style: {
             'width': 'data(thickness)',
-            'line-color': isFastMode ? '#64748b' : '#94a3b8',
-            'target-arrow-color': isFastMode ? '#64748b' : '#94a3b8',
+            'line-color': (ele: any) => {
+              const type = ele.data('label');
+              if (type === 'TRANSFERS' || type === 'SENT') return '#8b5cf6'; // Purple
+              if (type === 'OWNS' || type === 'HAS_ACCOUNT') return '#10b981'; // Green
+              return isFastMode ? '#64748b' : '#94a3b8';
+            },
+            'target-arrow-color': (ele: any) => {
+              const type = ele.data('label');
+              if (type === 'TRANSFERS' || type === 'SENT') return '#8b5cf6';
+              if (type === 'OWNS' || type === 'HAS_ACCOUNT') return '#10b981';
+              return isFastMode ? '#64748b' : '#94a3b8';
+            },
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'label': isFastMode ? '' : 'data(amount_usd)',

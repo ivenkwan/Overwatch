@@ -10,3 +10,5 @@ PyJWT
 passlib[bcrypt]
 python-multipart
 email-validator
+python-keycloak
+httpx

@@ -360,6 +360,10 @@ For that reason, every alert and case object should include a unified entity spi
 A clear approval model is part of the target operating model because HKMA repeatedly emphasizes governance, oversight, and documented justification for major decisions. The most practical setup is L1 analysts close or escalate low-complexity alerts, L2 investigators own cases and high-risk stablecoin patterns, the MLRO approves STR filing and supplementary STRs, and the AML committee approves material scenario changes, tuning outcomes, and remediation of significant backlog or data-quality issues.[^2][^1]
 
 
+``` Powershell
+docker-compose -f Z:\GITHUB\Overwatch\etl\docker-compose.etl.yml up -d
+```
+
 <span style="display:none"></span>
 
 <div align="center"></div>

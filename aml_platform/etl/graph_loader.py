@@ -1,3 +1,4 @@
+import os
 import logging
 import psycopg2
 
@@ -14,7 +15,7 @@ def get_db_connection():
         port=5432,
         database="aml_platform",
         user="aml_admin",
-        password="secure_password_123"
+        password=os.getenv("DB_PASSWORD", "aml_secure_api_password")
     )
 
 def get_super_nodes(cur):

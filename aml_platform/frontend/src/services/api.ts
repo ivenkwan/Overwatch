@@ -17,5 +17,74 @@ export const api = {
     });
     if (!res.ok) throw new Error("Failed to fetch graph network");
     return res.json();
+  },
+
+  async fetchGraphNeighborhood(entityId: string, depth: number = 2) {
+    const res = await fetch(`${API_BASE_URL}/graph/explore/${encodeURIComponent(entityId)}?depth=${depth}`, {
+      method: "GET",
+      headers: { 
+        "Content-Type": "application/json",
+      }
+    });
+    if (!res.ok) throw new Error("Failed to fetch entity neighborhood");
+    return res.json();
+  },
+
+  alerts: {
+    async fetchAll(status: string = 'OPEN', limit: number = 100) {
+      const res = await fetch(`${API_BASE_URL}/alerts/?status=${status}&limit=${limit}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch alerts");
+      return res.json();
+    },
+
+    async assign(alertId: string) {
+      const res = await fetch(`${API_BASE_URL}/alerts/${encodeURIComponent(alertId)}/assign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to assign alert");
+      return res.json();
+    },
+
+    async proposeClose(alertId: string, notes: string) {
+      const res = await fetch(`${API_BASE_URL}/alerts/${encodeURIComponent(alertId)}/propose-close?notes=${encodeURIComponent(notes)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to propose alert closure");
+      return res.json();
+    },
+
+    async approve(alertId: string) {
+      const res = await fetch(`${API_BASE_URL}/alerts/${encodeURIComponent(alertId)}/approve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to approve alert");
+      return res.json();
+    },
+
+    async reject(alertId: string, notes: string) {
+      const res = await fetch(`${API_BASE_URL}/alerts/${encodeURIComponent(alertId)}/reject?notes=${encodeURIComponent(notes)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to reject alert");
+      return res.json();
+    }
+  },
+
+  reports: {
+    async getDailyKPIs() {
+      const res = await fetch(`${API_BASE_URL}/reports/kpis`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch daily KPIs");
+      return res.json();
+    }
   }
 };

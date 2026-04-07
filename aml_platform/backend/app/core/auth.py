@@ -9,8 +9,10 @@ from typing import Optional
 # Setup Audit Logger
 audit_logger = logging.getLogger("aml_audit")
 
+import os
+
 # Security configs (In production use env vars)
-SECRET_KEY = "aml_super_secret_key_change_me"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "aml_super_secret_key_change_me_dev")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

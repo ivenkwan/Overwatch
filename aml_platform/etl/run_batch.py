@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 import psycopg2
@@ -17,7 +18,7 @@ def get_db_connection():
         port=5432,
         database="aml_platform",
         user="aml_admin",
-        password="secure_password_123"
+        password=os.getenv("DB_PASSWORD", "aml_secure_api_password")
     )
 
 def normalize_fiat_swift(raw_swift_json):

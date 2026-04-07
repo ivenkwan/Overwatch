@@ -9,6 +9,7 @@ router = APIRouter()
 @router.get("/network")
 async def get_network(
     limit: int = 150,
+    current_user: dict = Depends(auth.get_current_user),
     db: asyncpg.Connection = Depends(get_db)
 ):
     """

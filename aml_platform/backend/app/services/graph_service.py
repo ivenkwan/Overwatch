@@ -67,5 +67,52 @@ async def get_full_network(db: asyncpg.Connection, limit: int) -> list:
     return elements
 
 async def get_neighborhood(db: asyncpg.Connection, entity_id: str, depth: int) -> list:
-    # Just an example implementation, could be expanded using variable length paths
-    return await get_full_network(db, 100)
+    """Fetches a subgraph centered around entity_id up to 'depth' hops away."""
+    entity_id_clean = str(entity_id).replace("'", "''")
+    depth_clean = max(1, min(int(depth), 6))
+    
+    query = f"""
+    SELECT * FROM cypher('tap_and_go_network', $$
+        MATCH path=(root {{id: '{entity_id_clean}'}})-[*1..{depth_clean}]-(m)
+        UNWIND relationships(path) AS rel
+        WITH DISTINCT rel
+        RETURN properties(startNode(rel)), id(startNode(rel)), label(startNode(rel)), 
+               properties(rel), id(rel), label(rel), 
+               properties(endNode(rel)), id(endNode(rel)), label(endNode(rel))
+    $$) AS (n_prop agtype, n_id agtype, n_lbl agtype, r_prop agtype, r_id agtype, r_lbl agtype, m_prop agtype, m_id agtype, m_lbl agtype);
+    """
+    
+    rows = await db.fetch(query)
+    elements = []
+    seen_nodes = set()
+    
+    for r in rows:
+        try:
+            n_prop = json.loads(r['n_prop']) if r['n_prop'] else {}
+            m_prop = json.loads(r['m_prop']) if r['m_prop'] else {}
+            
+            n_id = str(r['n_id'])
+            m_id = str(r['m_id'])
+            
+            if n_id not in seen_nodes:
+                elements.append({"data": {**n_prop, "id": n_id, "label": str(r['n_lbl']).strip('"')}})
+                seen_nodes.add(n_id)
+                
+            if m_id not in seen_nodes:
+                elements.append({"data": {**m_prop, "id": m_id, "label": str(r['m_lbl']).strip('"')}})
+                seen_nodes.add(m_id)
+                
+            r_prop = json.loads(r['r_prop']) if r['r_prop'] else {}
+            elements.append({
+                "data": {
+                    "id": f"edge_{r['r_id']}",
+                    "source": n_id,
+                    "target": m_id,
+                    "label": str(r['r_lbl']).strip('"'),
+                    **r_prop
+                }
+            })
+        except Exception as e:
+            continue
+            
+    return elements

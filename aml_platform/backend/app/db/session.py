@@ -2,8 +2,9 @@ import os
 import asyncpg
 from typing import AsyncGenerator
 
-# Point to the container age_db if inside Docker, or localhost:5433 if running on host
-database_url = os.environ.get("DATABASE_URL", "postgresql://postgres:password@localhost:5433/age_prod_01")
+# Point to the container age_db if inside Docker, or localhost:5432 if running on host.
+# Note: Changing to the aml_api_role as per the new RBAC structure.
+database_url = os.environ.get("DATABASE_URL", "postgresql://aml_api_role:aml_secure_api_password@localhost:5432/age_prod_01")
 
 class DatabaseState:
     pool: asyncpg.Pool = None

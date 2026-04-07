@@ -44,7 +44,7 @@ Function Wait-For-Http {
 }
 
 Function Check-Services {
-    # Note: Database Healthcheck is now delegated to docker-compose.etl.yml.
+    # Note: Database Healthcheck is now delegated to ../etl/docker-compose.etl.yml.
     # The manage_aml_services.ps1 assumes age_db is already running upstream.
     Write-Host "`nAssuming Database container is managed upstream..." -ForegroundColor Green
 
@@ -89,6 +89,13 @@ if ($Rebuild) {
 } else {
     Write-Host "Starting AML Platform Services (Normal Startup)..." -ForegroundColor Cyan
     docker-compose up -d
+}
+# Initialize Keycloak database in the ETL container if it isn't already created
+Write-Host "`nEnsuring Keycloak internal database exists..." -ForegroundColor Cyan
+try {
+    .\init_keycloak.ps1
+} catch {
+    Write-Host "[WARNING] Failed to run init_keycloak.ps1." -ForegroundColor Yellow
 }
 
 # Check if everything came up properly

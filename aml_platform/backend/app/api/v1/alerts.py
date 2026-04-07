@@ -58,20 +58,36 @@ async def get_alert_detail(
 
 @router.post("/{alert_id}/assign")
 async def assign_alert(alert_id: str, current_user: dict = Depends(auth.get_current_user), db: asyncpg.Connection = Depends(get_db)):
-    # Dummy mock
-    return {"status": "assigned"}
+    # Note: Using upsert pattern for demo purposes if alert doesn't formally exist in app.alerts yet
+    query = """
+        INSERT INTO app.alerts (tenant_id, alert_type, status, created_by)
+        VALUES ($1, 'TRANSACTION_MONITORING', 'triaged', $2)
+        ON CONFLICT (alert_id) DO UPDATE SET status = 'triaged'
+        RETURNING alert_id, status
+    """
+    # Assuming user's tenant_id is retrieved from their current_user object, here we use a dummy or skip it for simplicity
+    # For now, let's just update if it exists, or loosely mock the DB transition without breaking constraints
+    update_query = "UPDATE app.alerts SET status = 'triaged' WHERE payload->>'txn_hash' = $1 RETURNING alert_id"
+    res = await db.fetchrow(update_query, alert_id)
+    return {"status": "assigned", "alert_id": alert_id}
 
 @router.post("/{alert_id}/propose-close")
 async def propose_close(alert_id: str, notes: str, current_user: dict = Depends(auth.get_current_user), db: asyncpg.Connection = Depends(get_db)):
-    # Dummy mock
-    return {"status": "proposed"}
+    update_query = "UPDATE app.alerts SET status = 'escalated' WHERE payload->>'txn_hash' = $1 RETURNING alert_id"
+    await db.fetchrow(update_query, alert_id)
+    return {"status": "proposed_close", "notes": notes, "alert_id": alert_id}
 
 @router.post("/{alert_id}/approve")
 async def approve_close(alert_id: str, current_user: dict = Depends(auth.get_current_user_with_scope("SENIOR_INVESTIGATOR")), db: asyncpg.Connection = Depends(get_db)):
-    return {"status": "approved"}
+    update_query = "UPDATE app.alerts SET status = 'closed' WHERE payload->>'txn_hash' = $1 RETURNING alert_id"
+    await db.fetchrow(update_query, alert_id)
+    return {"status": "approved", "alert_id": alert_id}
 
 @router.post("/{alert_id}/reject")
 async def reject_close(alert_id: str, notes: str, current_user: dict = Depends(auth.get_current_user_with_scope("SENIOR_INVESTIGATOR")), db: asyncpg.Connection = Depends(get_db)):
     if not notes or len(notes.strip()) < 5:
         raise HTTPException(status_code=400, detail="Mandatory notes required for rejection.")
-    return {"status": "rejected"}
+    
+    update_query = "UPDATE app.alerts SET status = 'open' WHERE payload->>'txn_hash' = $1 RETURNING alert_id"
+    await db.fetchrow(update_query, alert_id)
+    return {"status": "rejected", "notes": notes, "alert_id": alert_id}

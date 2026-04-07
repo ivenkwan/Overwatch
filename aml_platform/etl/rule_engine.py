@@ -1,3 +1,4 @@
+import os
 import logging
 import json
 import psycopg2
@@ -18,7 +19,7 @@ def get_db_connection():
         port=5432,
         database="aml_platform",
         user="aml_admin", 
-        password="secure_password_123"
+        password=os.getenv("DB_PASSWORD", "aml_secure_api_password")
     )
 
 def execute_rules_and_sink_alerts():

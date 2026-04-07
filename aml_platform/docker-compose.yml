@@ -7,9 +7,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: aml-fastapi-backend
+    env_file:
+      # <--- Add this
+      - .env # <--- Add this
     environment:
-      # Use host.docker.internal to bridge to the ETL age_db container running on 5433
-      DATABASE_URL: postgresql://postgres:password@host.docker.internal:5433/age_prod_01
+      # Use host.docker.internal to bridge to the ETL age_db container running on host port 5433
+      DATABASE_URL: postgresql://aml_api_role:aml_secure_api_password@host.docker.internal:5433/age_prod_01
       ENV: production
     ports:
       - "8000:8000"
@@ -19,6 +22,26 @@ services:
     networks:
       - aml-network
 
+  # 2. Keycloak: Identity Management
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.0
+    command: start-dev
+    container_name: aml-keycloak
+    environment:
+      # These bootstrap credentials will create the master realm admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://host.docker.internal:5433/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - aml-network
 
   # 3. Frontend: Next.js App
   aml-frontend:
@@ -38,6 +61,7 @@ services:
 
 volumes:
   aml_pgdata:
+
 
 networks:
   aml-network:

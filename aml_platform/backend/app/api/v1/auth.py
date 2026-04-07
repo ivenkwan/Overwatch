@@ -13,9 +13,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     Authenticate user and return JWT token.
     Uses PostgreSQL DB to read user credentials.
     """
-    cursor = db.cursor()
-    cursor.execute("SELECT id, username, hashed_password, role FROM public.users WHERE username = %s AND is_active = TRUE", (form_data.username,))
-    user = cursor.fetchone()
+    user = await db.fetchrow("SELECT id, username, hashed_password, role FROM public.users WHERE username = $1 AND is_active = TRUE", form_data.username)
     
     if not user:
         raise HTTPException(
