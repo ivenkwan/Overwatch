@@ -2,7 +2,7 @@ import random
 import uuid
 from datetime import datetime, timedelta
 
-def generate_bulk_data(count=1000):
+def generate_bulk_data(count=20000):
     sql_statements = []
     
     # 1. Generate Peeling Chains (approx 30% of data)
@@ -66,6 +66,11 @@ def generate_bulk_data(count=1000):
     with open('bulk_synthetic_data.sql', 'w') as f:
         f.write("\n".join(sql_statements[:count]))
 
+import sys
+
 if __name__ == "__main__":
-    generate_bulk_data(1000)
-    print("Generated 1000 rows in bulk_synthetic_data.sql")
+    count = 20000
+    if len(sys.argv) > 1:
+        count = int(sys.argv[1])
+    generate_bulk_data(count)
+    print(f"Generated {count} rows in bulk_synthetic_data.sql")

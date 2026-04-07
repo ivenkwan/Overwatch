@@ -10,12 +10,16 @@ class DatabaseState:
 
 db_state = DatabaseState()
 
+async def init_connection(conn):
+    await conn.execute("LOAD 'age';")
+    await conn.execute("SET search_path = ag_catalog, \"$user\", public;")
+
 async def init_db_pool():
     db_state.pool = await asyncpg.create_pool(
         dsn=database_url,
         min_size=2,
         max_size=20,
-        server_settings={'search_path': 'ag_catalog, "$user", public'}
+        setup=init_connection
     )
 
 async def close_db_pool():

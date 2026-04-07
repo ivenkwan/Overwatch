@@ -34,14 +34,14 @@ async def get_full_network(db: asyncpg.Connection, limit: int) -> list:
             # Add Source Node
             if n_id not in seen_nodes:
                 elements.append({
-                    "data": {"id": n_id, "label": str(r['n_lbl']).strip('"'), **n_prop}
+                    "data": {**n_prop, "id": n_id, "label": str(r['n_lbl']).strip('"')}
                 })
                 seen_nodes.add(n_id)
                 
             # Add Target Node
             if m_id not in seen_nodes:
                 elements.append({
-                    "data": {"id": m_id, "label": str(r['m_lbl']).strip('"'), **m_prop}
+                    "data": {**m_prop, "id": m_id, "label": str(r['m_lbl']).strip('"')}
                 })
                 seen_nodes.add(m_id)
                 

@@ -9,7 +9,6 @@ router = APIRouter()
 @router.get("/network")
 async def get_network(
     limit: int = 150,
-    current_user: dict = Depends(auth.get_current_user),
     db: asyncpg.Connection = Depends(get_db)
 ):
     """
@@ -17,8 +16,8 @@ async def get_network(
     """
     try:
         subgraph = await graph_service.get_full_network(db, limit)
-        # return subgraph unmasked for the demo (or use pii_service if configured)
-        return {"status": "success", "elements": pii_service.mask_pii(subgraph, current_user["role"])}
+        # return subgraph unmasked for the demo
+        return {"status": "success", "elements": pii_service.mask_pii(subgraph, "ADMIN")}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
