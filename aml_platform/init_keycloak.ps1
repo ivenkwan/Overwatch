@@ -11,7 +11,7 @@ It is designed to cleanly handle cases where the database or user already exists
 .\init_keycloak.ps1
 #>
 
-$ContainerName = "etl-age_db-1"
+$ContainerName = "aml-age-db"
 
 # Check if the container is running
 $ContainerStatus = (docker inspect -f '{{.State.Status}}' $ContainerName 2>$null)

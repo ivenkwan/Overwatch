@@ -44,9 +44,7 @@ Function Wait-For-Http {
 }
 
 Function Check-Services {
-    # Note: Database Healthcheck is now delegated to ../etl/docker-compose.etl.yml.
-    # The manage_aml_services.ps1 assumes age_db is already running upstream.
-    Write-Host "`nAssuming Database container is managed upstream..." -ForegroundColor Green
+    Write-Host "`nDatabase is managed within platform's docker-compose.yml..." -ForegroundColor Green
 
     # Check Backend
     # Fast API default docs are at /docs, or root / might return 404 but server is up. 
