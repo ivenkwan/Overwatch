@@ -140,6 +140,10 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA app TO aml_etl_role;
 GRANT USAGE ON SCHEMA app TO aml_api_role;
 GRANT USAGE ON SCHEMA app TO aml_etl_role;
 
+-- Grant public schema access so flowable can initialize
+GRANT ALL ON SCHEMA public TO aml_api_role;
+GRANT ALL ON SCHEMA public TO aml_etl_role;
+
 -- 4. Enable RLS
 ALTER TABLE app.alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app.cases ENABLE ROW LEVEL SECURITY;

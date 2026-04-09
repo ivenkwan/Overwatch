@@ -36,7 +36,7 @@ def generate_csv():
     # 2. Smurfing Detection
     # Many deposits just below 10,000 threshold to one account
     target_smurf = "4444444444"
-    for i in range(10):
+    for i in range(50):
         sender = f"{5555555555 + i}"
         amount = 9900 + random.randint(-50, 50)
         data.append([sender, base_date.strftime("%Y-%m-%d %H:%M:%S"), ref_no, target_smurf, "HKG", "HKD", str(amount), str(amount), "D", "TRANSFER_P2P"])
@@ -66,7 +66,7 @@ def generate_csv():
     ref_no += 1
 
     # Adding some normal noise transactions
-    for i in range(50):
+    for i in range(500):
         sender = f"{1000000000 + i}"
         receiver = f"{9000000000 + i}"
         amount = random.randint(10, 2000)
