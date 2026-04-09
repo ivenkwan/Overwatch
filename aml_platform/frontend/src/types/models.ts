@@ -52,14 +52,21 @@ export interface Alert {
 
 // 5. Case Dimension
 export interface Case {
-  id: string;
-  createdAt: string;
-  investigatorId: string;
-  status: 'OPEN' | 'PENDING_INFO' | 'PENDING_APPROVAL' | 'CLOSED_NO_ACTION' | 'STR_FILED';
-  linkedCustomers: string[];
-  linkedAlerts: string[];
-  timeline: { timestamp: string; action: string; actor: string }[];
-  strReference?: string; // JFIU Reference if reported
-  makerId?: string;
-  checkerId?: string;
+  case_id: string;
+  case_number: string;
+  created_at: string;
+  status: string;
+  severity: string;
+  source_alert_id?: string;
+  created_by: string;
+  assigned_to?: string;
+  reviewer_id?: string;
+  approver_id?: string;
+  workflow_instance_id?: string;
+  activeTask?: {
+    id: string;
+    name: string;
+    assignee: string | null;
+    taskDefinitionKey: string;
+  };
 }

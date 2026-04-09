@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS app.cases (
   status TEXT NOT NULL CHECK (status IN ('open','under_review','approved','filed','closed')),
   severity TEXT NOT NULL CHECK (severity IN ('low','medium','high','critical')),
   source_alert_id UUID REFERENCES app.alerts(alert_id),
+  workflow_instance_id TEXT,
   created_by UUID NOT NULL REFERENCES app.app_users(user_id),
   assigned_to UUID REFERENCES app.app_users(user_id),
   reviewer_id UUID REFERENCES app.app_users(user_id),

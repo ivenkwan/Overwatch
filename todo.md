@@ -8,7 +8,7 @@
   - [] Implement .env for environment variable, 
 - [] Implement production grade dashboard with proper structure and backend API integration
   - [DONE] AlertWorkbench
-  - [] CaseManagement
+  - [] CaseManagement and workflow engine
   - [] STRPreparation
   - [] ScreeningModule
   - [DONE] GovernanceMIS and KPI summary

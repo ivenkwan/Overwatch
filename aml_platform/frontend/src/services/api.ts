@@ -77,6 +77,46 @@ export const api = {
     }
   },
 
+  cases: {
+    async fetchAll() {
+      const res = await fetch(`${API_BASE_URL}/cases/`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch cases");
+      return res.json();
+    },
+
+    async fetchOne(caseId: string) {
+      const res = await fetch(`${API_BASE_URL}/cases/${encodeURIComponent(caseId)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch case detail");
+      return res.json();
+    },
+
+    async create(alertId: string) {
+      const res = await fetch(`${API_BASE_URL}/cases/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alert_id: alertId })
+      });
+      if (!res.ok) throw new Error("Failed to create case");
+      return res.json();
+    },
+
+    async submitAction(caseId: string, action: string, notes?: string) {
+      const res = await fetch(`${API_BASE_URL}/cases/${encodeURIComponent(caseId)}/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, notes })
+      });
+      if (!res.ok) throw new Error("Failed to submit action on case");
+      return res.json();
+    }
+  },
+
   reports: {
     async getDailyKPIs() {
       const res = await fetch(`${API_BASE_URL}/reports/kpis`, {

@@ -107,6 +107,24 @@ services:
     networks:
       - aml-network
 
+  # 6. Flowable Workflow Engine
+  flowable:
+    image: flowable/flowable-rest:latest
+    container_name: aml-flowable
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://age_db:5432/age_prod_01?currentSchema=public
+      - SPRING_DATASOURCE_USERNAME=aml_api_role
+      - SPRING_DATASOURCE_PASSWORD=aml_secure_api_password
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
+    ports:
+      - "8081:8080" # Using 8081 to avoid conflict with keycloak on 8080
+    depends_on:
+      age_db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aml-network
+
 volumes:
   aml_pgdata:
 
