@@ -272,27 +272,27 @@ The dashboard should be one screen with role-based sections: executive oversight
 | AML Monitoring TOM – Hong Kong (Fiat + Stablecoin)                                               |
 | Date | Entity | Business line | Segment | Theme toggle | Export MIS | Committee pack             |
 +--------------------------------------------------------------------------------------------------+
-| KPI STRIP                                                                                         |
-| Open Alerts | Alerts > SLA | Open Cases | Pending STR | STR Conv % | False Pos % | Data Issues  |
+| KPI STRIP                                                                                        |
+| Open Alerts | Alerts > SLA | Open Cases | Pending STR | STR Conv % | False Pos % | Data Issues   |
 +--------------------------------------------------------------------------------------------------+
-| RISK & FLOW OVERVIEW                                                                              |
+| RISK & FLOW OVERVIEW                                                                             |
 | Alerts by type: Fiat | Stablecoin | Hybrid        Top typologies        High-risk corridors      |
 | Trend: 30d alerts / productive cases / STRs             Stablecoin mint-redeem / in-out trend    |
 +--------------------------------------------------------------------------------------------------+
-| ALERT WORKBENCH                                  | SCREENING & EXCEPTIONS                         |
+| ALERT WORKBENCH                                  | SCREENING & EXCEPTIONS                        |
 | Queue by priority / age / scenario / analyst     | Sanctions/name hits                           |
-| Selected alert:                                  | Wallet blacklist hits                          |
+| Selected alert:                                  | Wallet blacklist hits                         |
 | - customer profile                               | Data lineage / failed ingestion               |
-| - account + wallet activity                      | Model/rule test failures                       |
-| - prior alerts / prior STR refs                  |                                                |
-| - IP / device / geo / channel                    |                                                |
-| Decision: Close | Escalate | RFI | EDD | Hold    |                                                |
+| - account + wallet activity                      | Model/rule test failures                      |
+| - prior alerts / prior STR refs                  |                                               |
+| - IP / device / geo / channel                    |                                               |
+| Decision: Close | Escalate | RFI | EDD | Hold    |                                               |
 +--------------------------------------------------------------------------------------------------+
-| CASE DESK                                        | STR DRAFTING                                   |
-| Related entities graph                           | Triggering factors                              |
-| Timeline of transactions / notes / approvals     | Subject background                              |
-| Linked accounts / wallets / devices              | Transactions & suspicious indicators            |
-| Actions: freeze? exit? monitor?                  | Digital footprints / attachments / XML/PDF      |
+| CASE DESK                                        | STR DRAFTING                                  |
+| Related entities graph                           | Triggering factors                            |
+| Timeline of transactions / notes / approvals     | Subject background                            |
+| Linked accounts / wallets / devices              | Transactions & suspicious indicators          |
+| Actions: freeze? exit? monitor?                  | Digital footprints / attachments / XML/PDF    |
 +--------------------------------------------------------------------------------------------------+
 | GOVERNANCE & TUNING                                                                              |
 | Scenario effectiveness | Threshold review due | Backlog ageing | QA sample fail | Committee log  |
