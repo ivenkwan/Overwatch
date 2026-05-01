@@ -1,0 +1,492 @@
+{
+  "communities": {
+    "0": [
+      "aml_platform_backend_app_api_v1_admin_py",
+      "aml_platform_backend_app_api_v1_auth_py",
+      "aml_platform_backend_app_schemas_user_py",
+      "basemodel",
+      "schemas_user_config",
+      "schemas_user_token",
+      "schemas_user_tokendata",
+      "schemas_user_userbase",
+      "schemas_user_usercreate",
+      "schemas_user_userout",
+      "v1_admin_assign_role",
+      "v1_admin_create_user",
+      "v1_admin_get_keycloak_admin",
+      "v1_admin_get_roles",
+      "v1_admin_get_tenant_users",
+      "v1_admin_rationale_109",
+      "v1_admin_rationale_123",
+      "v1_admin_rationale_134",
+      "v1_admin_rationale_45",
+      "v1_admin_roleassign",
+      "v1_admin_usercreate",
+      "v1_auth_login_for_access_token",
+      "v1_auth_rationale_12"
+    ],
+    "1": [
+      "aml_platform_backend_app_core_auth_py",
+      "core_auth_create_access_token",
+      "core_auth_get_current_user",
+      "core_auth_get_current_user_with_scope",
+      "core_auth_get_password_hash",
+      "core_auth_log_audit_event",
+      "core_auth_log_unmasking_event",
+      "core_auth_rationale_39",
+      "core_auth_rationale_65",
+      "core_auth_rationale_77",
+      "core_auth_rationale_86",
+      "core_auth_verify_password"
+    ],
+    "2": [
+      "aml_platform_backend_app_db_session_py",
+      "aml_platform_backend_app_main_py",
+      "app_main_health_check",
+      "app_main_lifespan",
+      "db_session_close_db_pool",
+      "db_session_databasestate",
+      "db_session_get_db",
+      "db_session_init_connection",
+      "db_session_init_db_pool",
+      "db_session_rationale_31"
+    ],
+    "3": [
+      "aml_platform_frontend_eslint_config_mjs",
+      "assets_ledger_ingest_cleaned_ledger_data",
+      "assets_ledger_ingest_ingestconfig",
+      "assets_ledger_ingest_load_relational_tables",
+      "assets_ledger_ingest_rationale_15",
+      "assets_ledger_ingest_rationale_32",
+      "assets_ledger_ingest_rationale_66",
+      "assets_ledger_ingest_raw_ledger_data",
+      "config",
+      "etl_assets_ledger_ingest_py"
+    ],
+    "4": [
+      "aml_platform_etl_graph_loader_py",
+      "etl_graph_loader_get_db_connection",
+      "etl_graph_loader_get_super_nodes",
+      "etl_graph_loader_promote_crypto_to_graph",
+      "etl_graph_loader_promote_fiat_to_graph",
+      "etl_graph_loader_rationale_22",
+      "etl_graph_loader_rationale_29",
+      "etl_graph_loader_rationale_57",
+      "etl_graph_loader_run_graph_promotion"
+    ],
+    "5": [
+      "etl_daily_pipeline_check_file_availability",
+      "etl_daily_pipeline_daily_update_job",
+      "etl_daily_pipeline_daily_update_schedule",
+      "etl_daily_pipeline_get_db_connection",
+      "etl_daily_pipeline_load_csv_to_postgres",
+      "etl_daily_pipeline_py",
+      "etl_daily_pipeline_rename_to_ok",
+      "etl_daily_pipeline_update_graph_model",
+      "etl_daily_pipeline_verify_data_load"
+    ],
+    "6": [
+      "aml_platform_backend_app_api_v1_alerts_py",
+      "v1_alerts_approve_close",
+      "v1_alerts_assign_alert",
+      "v1_alerts_get_alert_detail",
+      "v1_alerts_get_alerts",
+      "v1_alerts_get_monitoring_feed",
+      "v1_alerts_propose_close",
+      "v1_alerts_reject_close"
+    ],
+    "7": [
+      "aml_platform_backend_app_services_pii_service_py",
+      "aml_platform_tmp_test_pii_py",
+      "services_pii_service_mask_pii",
+      "services_pii_service_mask_value",
+      "services_pii_service_rationale_15",
+      "services_pii_service_rationale_30",
+      "tmp_test_pii_test_junior_masking",
+      "tmp_test_pii_test_senior_unmasking"
+    ],
+    "8": [
+      "aml_platform_etl_run_batch_py",
+      "etl_run_batch_get_db_connection",
+      "etl_run_batch_normalize_crypto_txn",
+      "etl_run_batch_normalize_fiat_swift",
+      "etl_run_batch_rationale_25",
+      "etl_run_batch_rationale_51",
+      "etl_run_batch_run_t1_batch_job"
+    ],
+    "9": [
+      "aml_platform_backend_app_services_flowable_client_py",
+      "services_flowable_client_complete_task",
+      "services_flowable_client_deploy_process",
+      "services_flowable_client_get_active_task",
+      "services_flowable_client_get_auth",
+      "services_flowable_client_start_case_process"
+    ],
+    "10": [
+      "aml_platform_backend_app_api_v1_cases_py",
+      "v1_cases_action_case",
+      "v1_cases_create_case",
+      "v1_cases_get_case_detail",
+      "v1_cases_get_cases"
+    ],
+    "11": [
+      "aml_platform_backend_app_api_v1_graph_py",
+      "v1_graph_explore_graph",
+      "v1_graph_get_network",
+      "v1_graph_rationale_15",
+      "v1_graph_rationale_32"
+    ],
+    "12": [
+      "aml_platform_backend_app_api_v1_reports_py",
+      "v1_reports_get_daily_kpis",
+      "v1_reports_get_monthly_report",
+      "v1_reports_rationale_12",
+      "v1_reports_rationale_44"
+    ],
+    "13": [
+      "aml_platform_backend_app_services_graph_service_py",
+      "services_graph_service_get_full_network",
+      "services_graph_service_get_neighborhood",
+      "services_graph_service_parse_agtype",
+      "services_graph_service_rationale_70"
+    ],
+    "14": [
+      "aml_platform_etl_run_demo_demo_py",
+      "etl_run_demo_demo_ensure_schema_exists",
+      "etl_run_demo_demo_load_sql_bulk",
+      "etl_run_demo_demo_main",
+      "etl_run_demo_demo_run_command"
+    ],
+    "15": [
+      "aml_platform_frontend_src_components_errorboundary_tsx",
+      "components_errorboundary_errorboundary",
+      "components_errorboundary_errorboundary_componentdidcatch",
+      "components_errorboundary_errorboundary_getderivedstatefromerror",
+      "components_errorboundary_errorboundary_render"
+    ],
+    "16": [
+      "aml_platform_manage_aml_services_check_services",
+      "aml_platform_manage_aml_services_ps1",
+      "aml_platform_manage_aml_services_teardown_and_rebuild",
+      "aml_platform_manage_aml_services_wait_for_http"
+    ],
+    "17": [
+      "aml_platform_etl_reload_env_and_demo_py",
+      "etl_reload_env_and_demo_drop_and_recreate_data",
+      "etl_reload_env_and_demo_main",
+      "etl_reload_env_and_demo_run_command"
+    ],
+    "18": [
+      "aml_platform_frontend_src_components_modules_casemanagement_tsx",
+      "modules_casemanagement_handleaction",
+      "modules_casemanagement_loadcasedetails",
+      "modules_casemanagement_loadcases"
+    ],
+    "19": [
+      "aml_platform_backend_etl_daily_kpi_mart_py",
+      "etl_daily_kpi_mart_compute_daily_kpi",
+      "etl_daily_kpi_mart_setup_schema"
+    ],
+    "20": [
+      "aml_platform_etl_rule_engine_py",
+      "etl_rule_engine_execute_rules_and_sink_alerts",
+      "etl_rule_engine_get_db_connection"
+    ],
+    "21": [
+      "aml_platform_frontend_src_app_admin_users_page_tsx",
+      "users_page_fetchusers",
+      "users_page_handlecreateuser"
+    ],
+    "22": [
+      "assets_graph_projection_rationale_9",
+      "assets_graph_projection_update_age_graph",
+      "etl_assets_graph_projection_py"
+    ],
+    "23": [
+      "generate_fraud_data_py",
+      "overwatch_generate_fraud_data_generate_csv"
+    ],
+    "24": [
+      "aml_platform_backend_etl_check_schema_py",
+      "etl_check_schema_run"
+    ],
+    "25": [
+      "aml_platform_etl_data_gen_bulk_py",
+      "etl_data_gen_bulk_generate_bulk_data"
+    ],
+    "26": [
+      "aml_platform_frontend_src_app_layout_tsx",
+      "app_layout_rootlayout"
+    ],
+    "27": [
+      "aml_platform_frontend_src_app_page_tsx",
+      "app_page_home"
+    ],
+    "28": [
+      "aml_platform_frontend_src_app_dashboard_layout_tsx",
+      "dashboard_layout_layout"
+    ],
+    "29": [
+      "alerts_page_alertspage",
+      "aml_platform_frontend_src_app_dashboard_alerts_page_tsx"
+    ],
+    "30": [
+      "aml_platform_frontend_src_app_dashboard_governance_page_tsx",
+      "governance_page_governancemispage"
+    ],
+    "31": [
+      "admin_layout_adminlayout",
+      "aml_platform_frontend_src_app_admin_layout_tsx"
+    ],
+    "32": [
+      "aml_platform_frontend_src_app_admin_roles_page_tsx",
+      "roles_page_fetchroles"
+    ],
+    "33": [
+      "aml_platform_frontend_src_components_graphexplorer_tsx",
+      "components_graphexplorer_graphexplorer"
+    ],
+    "34": [
+      "aml_platform_frontend_src_components_kpicard_tsx",
+      "components_kpicard_kpicard"
+    ],
+    "35": [
+      "aml_platform_frontend_src_components_layout_dashboardlayout_tsx",
+      "layout_dashboardlayout_dashboardlayout"
+    ],
+    "36": [
+      "aml_platform_frontend_src_components_modules_alertworkbench_tsx",
+      "modules_alertworkbench_alertworkbench"
+    ],
+    "37": [
+      "aml_platform_frontend_src_components_modules_strpreparation_tsx",
+      "modules_strpreparation_strpreparation"
+    ],
+    "38": [
+      "aml_platform_init_keycloak_ps1"
+    ],
+    "39": [
+      "aml_platform_etl_typologies_py"
+    ],
+    "40": [
+      "aml_platform_frontend_next_env_d_ts"
+    ],
+    "41": [
+      "aml_platform_frontend_next_config_ts"
+    ],
+    "42": [
+      "aml_platform_frontend_postcss_config_mjs"
+    ],
+    "43": [
+      "aml_platform_frontend_src_config_ts"
+    ],
+    "44": [
+      "aml_platform_frontend_src_app_dashboard_network_page_tsx"
+    ],
+    "45": [
+      "aml_platform_frontend_src_components_modules_governancemis_tsx"
+    ],
+    "46": [
+      "aml_platform_frontend_src_components_modules_monitoringfeed_tsx"
+    ],
+    "47": [
+      "aml_platform_frontend_src_components_modules_screeningmodule_tsx"
+    ],
+    "48": [
+      "aml_platform_frontend_src_services_api_ts"
+    ],
+    "49": [
+      "aml_platform_frontend_src_types_models_ts"
+    ],
+    "50": [
+      "etl_debug_age_py"
+    ],
+    "51": [
+      "etl_repo_py"
+    ],
+    "52": [
+      "etl_assets_init_py"
+    ]
+  },
+  "cohesion": {
+    "0": 0.11,
+    "1": 0.18,
+    "2": 0.22,
+    "3": 0.2,
+    "4": 0.33,
+    "5": 0.44,
+    "6": 0.25,
+    "7": 0.32,
+    "8": 0.43,
+    "9": 0.6,
+    "10": 0.4,
+    "11": 0.4,
+    "12": 0.4,
+    "13": 0.4,
+    "14": 0.7,
+    "15": 0.4,
+    "16": 0.67,
+    "17": 0.83,
+    "18": 0.83,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 0.67,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0,
+    "51": 1.0,
+    "52": 1.0
+  },
+  "gods": [
+    {
+      "id": "etl_daily_pipeline_daily_update_job",
+      "label": "daily_update_job()",
+      "degree": 6
+    },
+    {
+      "id": "services_flowable_client_get_auth",
+      "label": "get_auth()",
+      "degree": 5
+    },
+    {
+      "id": "services_pii_service_mask_pii",
+      "label": "mask_pii()",
+      "degree": 5
+    },
+    {
+      "id": "etl_graph_loader_run_graph_promotion",
+      "label": "run_graph_promotion()",
+      "degree": 5
+    },
+    {
+      "id": "schemas_user_userbase",
+      "label": "UserBase",
+      "degree": 4
+    },
+    {
+      "id": "etl_run_batch_run_t1_batch_job",
+      "label": "run_t1_batch_job()",
+      "degree": 4
+    },
+    {
+      "id": "etl_run_demo_demo_main",
+      "label": "main()",
+      "degree": 4
+    },
+    {
+      "id": "components_errorboundary_errorboundary",
+      "label": "ErrorBoundary",
+      "degree": 4
+    },
+    {
+      "id": "etl_daily_pipeline_get_db_connection",
+      "label": "get_db_connection()",
+      "degree": 4
+    },
+    {
+      "id": "app_main_lifespan",
+      "label": "lifespan()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "test_junior_masking()",
+      "target": "mask_pii()",
+      "source_files": [
+        "aml_platform\\tmp\\test_pii.py",
+        "aml_platform\\backend\\app\\services\\pii_service.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_junior_masking()` unexpectedly reaches hub `mask_pii()`"
+    },
+    {
+      "source": "test_senior_unmasking()",
+      "target": "mask_pii()",
+      "source_files": [
+        "aml_platform\\tmp\\test_pii.py",
+        "aml_platform\\backend\\app\\services\\pii_service.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_senior_unmasking()` unexpectedly reaches hub `mask_pii()`"
+    },
+    {
+      "source": "lifespan()",
+      "target": "init_db_pool()",
+      "source_files": [
+        "aml_platform\\backend\\app\\main.py",
+        "aml_platform\\backend\\app\\db\\session.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "lifespan()",
+      "target": "close_db_pool()",
+      "source_files": [
+        "aml_platform\\backend\\app\\main.py",
+        "aml_platform\\backend\\app\\db\\session.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Authenticate user and return JWT token.     Uses PostgreSQL DB to read user cred",
+      "target": "Token",
+      "source_files": [
+        "aml_platform\\backend\\app\\api\\v1\\auth.py",
+        "aml_platform\\backend\\app\\schemas\\user.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "questions": [
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `mask_pii()` (e.g. with `test_junior_masking()` and `test_senior_unmasking()`) actually correct?",
+      "why": "`mask_pii()` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Provisions a user in Keycloak and maps them to the local `app_users` table`, `Get all users mapped to the current tenant.`, `Fetch predefined roles that an admin can assign to a user.` to the rest of the system?",
+      "why": "27 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.11 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
