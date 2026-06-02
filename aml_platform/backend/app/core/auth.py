@@ -78,7 +78,7 @@ async def log_audit_event(user_id: str, action: str, details: str):
     Audit Trail. 
     Sinks to log file or DB asynchronously.
     """
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.now().isoformat()
     # In production, this would be an async DB record or high-integrity log sink
     audit_logger.info(f"AUDIT | {timestamp} | USER:{user_id} | ACTION:{action} | DATA:{details}")
 
