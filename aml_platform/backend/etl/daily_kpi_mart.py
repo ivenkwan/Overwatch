@@ -60,15 +60,15 @@ async def compute_daily_kpi(target_date: datetime.date):
     # We will use raw asyncpg to connect to localhost:5433 using postgres user or aml_api_role, but for ETL we might need more privileges
     
     try:
-        conn = await asyncpg.connect("postgresql://aml_dbatk:atk_secure_pass_123@localhost:5433/age_prod_01")
+        conn = await asyncpg.connect(database_url)
     except Exception as e:
-        print(f"Failed to connect as aml_dbatk: {e}")
+        print(f"Failed to connect using DATABASE_URL: {e}")
         try:
-            conn = await asyncpg.connect("postgresql://aml_api_role:aml_secure_api_password@localhost:5433/age_prod_01")
+            conn = await asyncpg.connect("postgresql://aml_dbatk:atk_secure_pass_123@localhost:5433/age_prod_01")
         except Exception as e2:
-            print(f"Failed to connect as aml_api_role: {e2}")
+            print(f"Failed to connect as aml_dbatk: {e2}")
             try:
-                conn = await asyncpg.connect("postgresql://postgres:postgres@localhost:5433/age_prod_01")
+                conn = await asyncpg.connect("postgresql://postgres:password@localhost:5433/age_prod_01")
             except Exception as e3:
                 print("All connection attempts failed.")
                 raise e3

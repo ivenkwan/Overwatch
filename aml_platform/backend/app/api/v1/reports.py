@@ -14,16 +14,16 @@ async def get_monthly_report(
     """
     try:
         # Aggregated Status Counts
-        status_rows = await db.fetch("SELECT status, COUNT(*) FROM ag_catalog.alerts GROUP BY status")
+        status_rows = await db.fetch("SELECT status, COUNT(*) FROM app.alerts GROUP BY status")
         status_counts = {row['status']: row['count'] for row in status_rows}
         
         # Senior Investigator Approvals (Checkers)
         checker_rows = await db.fetch(
             """
-            SELECT u.username, COUNT(a.id) as case_count
-            FROM ag_catalog.alerts a
-            JOIN public.users u ON a.checker_id = u.id
-            WHERE a.status = 'CLOSED'
+            SELECT u.username, COUNT(c.case_id) as case_count
+            FROM app.cases c
+            JOIN app.app_users u ON c.approver_id = u.user_id
+            WHERE c.status = 'closed'
             GROUP BY u.username
             """
         )

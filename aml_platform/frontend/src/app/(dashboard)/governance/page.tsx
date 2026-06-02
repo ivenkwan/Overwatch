@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "@/services/api";
-import { AlertCircle, TrendingUp, TrendingDown, CheckCircle, Clock, FileText, Settings, ShieldAlert, Activity } from "lucide-react";
+import { AlertCircle, TrendingUp, Clock, FileText, Settings, ShieldAlert, Activity, Award } from "lucide-react";
 
 export default function GovernanceMISPage() {
   const [data, setData] = useState<any>(null);
@@ -25,44 +25,35 @@ export default function GovernanceMISPage() {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center p-8 space-x-2">
-        <div className="w-4 h-4 rounded-full animate-pulse bg-blue-500"></div>
-        <div className="w-4 h-4 rounded-full animate-pulse bg-blue-500 animation-delay-200"></div>
-        <div className="w-4 h-4 rounded-full animate-pulse bg-blue-500 animation-delay-400"></div>
+      <div className="flex-1 flex h-full flex-col items-center justify-center text-slate-400 pt-10">
+        <div className="w-8 h-8 rounded-full border-4 border-slate-800 border-t-blue-500 animate-spin mb-4"></div>
+        <p className="font-bold">Aggregating Compliance Metrics...</p>
+        <p className="text-xs opacity-70 mt-2">Computing HKMA KPI values</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 text-red-900 border border-red-200 p-4 rounded-lg flex items-start space-x-3">
-          <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-red-800">Error Loading Governance MIS</h3>
-            <p className="text-red-700 mt-1">{error}</p>
-          </div>
-        </div>
+      <div className="flex-1 flex h-full flex-col items-center justify-center text-rose-400 pt-10 p-6 text-center">
+        <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
+        <h3 className="font-bold">Governance Dashboard Loading Failed</h3>
+        <p className="text-xs mt-2 opacity-75">{error}</p>
       </div>
     );
   }
 
-  // Format datestring
   const reportDate = data?.report_date ? new Date(data.report_date).toLocaleDateString() : 'N/A';
 
-  // RAG Configuration logic based on HKMA requirements
   const getRagStatus = (value: number, thresholdType: 'low_better' | 'high_better', boundaries: [number, number]) => {
-    // boundaries: [amber_start, red_start] relative to 'better' direction
-    // For low_better: green < boundaries[0] <= amber < boundaries[1] <= red
-    // For high_better: red < boundaries[1] <= amber < boundaries[0] <= green
     if (thresholdType === 'low_better') {
-      if (value >= boundaries[1]) return { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
-      if (value > boundaries[0]) return { color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' };
-      return { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' };
+      if (value >= boundaries[1]) return { color: 'text-rose-400', badge: 'bg-rose-500/10 text-rose-400 border border-rose-500/20', bg: 'bg-rose-950/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)]', label: 'Action Required' };
+      if (value > boundaries[0]) return { color: 'text-amber-400', badge: 'bg-amber-500/10 text-amber-400 border border-amber-500/20', bg: 'bg-amber-950/10 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)]', label: 'Monitor' };
+      return { color: 'text-emerald-400', badge: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20', bg: 'bg-emerald-950/10 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]', label: 'On Target' };
     } else {
-      if (value <= boundaries[1]) return { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
-      if (value < boundaries[0]) return { color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' };
-      return { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' };
+      if (value <= boundaries[1]) return { color: 'text-rose-400', badge: 'bg-rose-500/10 text-rose-400 border border-rose-500/20', bg: 'bg-rose-950/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)]', label: 'Action Required' };
+      if (value < boundaries[0]) return { color: 'text-amber-400', badge: 'bg-amber-500/10 text-amber-400 border border-amber-500/20', bg: 'bg-amber-950/10 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)]', label: 'Monitor' };
+      return { color: 'text-emerald-400', badge: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20', bg: 'bg-emerald-950/10 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]', label: 'On Target' };
     }
   };
 
@@ -112,80 +103,85 @@ export default function GovernanceMISPage() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Governance MIS</h1>
-          <p className="text-slate-500 mt-1">HKMA-aligned AML Compliance KPIs</p>
+    <div className="flex-1 p-6 relative z-20 flex flex-col pointer-events-auto h-full overflow-y-auto w-full">
+      <div className="flex justify-between items-center bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-slate-800 shadow-xl mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-slate-500/20 rounded-lg border border-slate-500/30">
+            <Award size={20} className="text-slate-300" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Governance & MIS (HKMA KPIs)</h2>
+            <p className="text-xs text-slate-500 mt-0.5">HKMA-aligned AML compliance health tracking</p>
+          </div>
         </div>
         <div className="text-right">
-          <p className="text-sm font-medium text-slate-500">Reporting Date (T-1)</p>
-          <p className="text-lg font-bold text-indigo-600">{reportDate}</p>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Reporting Date (T-1)</p>
+          <p className="text-sm font-bold text-blue-400 font-mono mt-0.5">{reportDate}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {kpis.map((kpi, idx) => (
-          <div key={idx} className={`rounded-xl border p-6 shadow-sm transition-all duration-200 hover:shadow-md ${kpi.status.bg} border-opacity-50`}>
+          <div key={idx} className={`rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-0.5 ${kpi.status.bg}`}>
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-2 rounded-lg bg-white bg-opacity-60 backdrop-blur-sm ${kpi.status.color}`}>
+              <div className={`p-2 rounded-lg bg-slate-950/40 ${kpi.status.color}`}>
                 {kpi.icon}
               </div>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white bg-opacity-70 ${kpi.status.color}`}>
-                {kpi.status.color.includes('emerald') ? 'On Target' : kpi.status.color.includes('amber') ? 'Monitor' : 'Action Required'}
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${kpi.status.badge}`}>
+                {kpi.status.label}
               </span>
             </div>
             
-            <h3 className="text-slate-600 font-medium text-sm">{kpi.title}</h3>
-            <div className="flex items-end space-x-2 mt-1">
-              <span className={`text-3xl font-bold tracking-tight ${kpi.status.color}`}>
+            <h3 className="text-slate-400 font-medium text-xs tracking-wide">{kpi.title}</h3>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className={`text-2xl font-black font-mono tracking-tight ${kpi.status.color}`}>
                 {kpi.value}
               </span>
             </div>
-            <p className="text-slate-500 text-xs mt-3">{kpi.desc}</p>
+            <p className="text-slate-500 text-[10px] font-medium mt-3 leading-relaxed">{kpi.desc}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <div className="md:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-            <Activity className="w-5 h-5 mr-2 text-indigo-500" />
-            Operational Volume
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-800 p-6 shadow-xl">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5 flex items-center">
+            <Activity className="w-4 h-4 mr-2 text-blue-400 animate-pulse" />
+            Operational Ingestion & Process Volumes
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
-              <p className="text-slate-500 text-xs font-medium mb-1">Total Alerts</p>
-              <p className="text-2xl font-bold text-slate-800">{data.total_alerts || 0}</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/60">
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Total Alerts</p>
+              <p className="text-xl font-bold font-mono text-slate-200">{data.total_alerts || 0}</p>
             </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
-              <p className="text-slate-500 text-xs font-medium mb-1">Closed (Level 1)</p>
-              <p className="text-2xl font-bold text-slate-800">{data.closed_non_suspicious || 0}</p>
+            <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/60">
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Closed (Level 1)</p>
+              <p className="text-xl font-bold font-mono text-slate-200">{data.closed_non_suspicious || 0}</p>
             </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
-              <p className="text-slate-500 text-xs font-medium mb-1">Escalated</p>
-              <p className="text-2xl font-bold text-slate-800">{data.cases_opened || 0}</p>
+            <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/60">
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Escalated</p>
+              <p className="text-xl font-bold font-mono text-slate-200">{data.cases_opened || 0}</p>
             </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
-              <p className="text-slate-500 text-xs font-medium mb-1">STRs Filed</p>
-              <p className="text-2xl font-bold text-slate-800">{data.strs_filed || 0}</p>
+            <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/60">
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">STRs Filed</p>
+              <p className="text-xl font-bold font-mono text-slate-200">{data.strs_filed || 0}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-sm p-6 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-br from-blue-900/30 to-indigo-900/30 backdrop-blur-md rounded-2xl border border-blue-500/20 p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
           <div className="relative z-10">
-            <h3 className="text-lg font-medium text-white-900 mb-2 opacity-90">Overall Health Score</h3>
-            <div className="flex items-baseline space-x-2">
-              <span className="text-5xl font-extrabold tracking-tighter">88</span>
-              <span className="text-indigo-200 font-medium">/ 100</span>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Composite AML Quality Score</h3>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-5xl font-black font-mono tracking-tight bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">88</span>
+              <span className="text-slate-500 text-xs font-bold">/ 100</span>
             </div>
-            <p className="text-sm mt-4 text-indigo-100">
-              Based on composite metrics including SLA adherence, false positive deviation, and quality control.
+            <p className="text-[10px] font-medium leading-relaxed text-slate-400 mt-4">
+              Calculated using standard weighted parameters: 40% SLA Adherence, 30% False Positive deviation, and 30% QA Clearance consistency.
             </p>
           </div>
-          <div className="absolute -right-8 -bottom-8 opacity-10">
-            <ShieldAlert className="w-48 h-48" />
+          <div className="absolute -right-8 -bottom-8 opacity-5">
+            <ShieldAlert className="w-36 h-36" />
           </div>
         </div>
       </div>
