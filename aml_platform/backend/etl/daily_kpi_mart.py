@@ -3,7 +3,7 @@ import os
 import asyncio
 import datetime
 import asyncpg
-from dateutil.relativedelta import relativedelta
+
 
 # Add backend dir to pythonpath to import app.db
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
