@@ -16,10 +16,82 @@ export default function NetworkPage() {
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
   const [searchDepth, setSearchDepth] = useState<number>(2);
   const [isFastMode, setIsFastMode] = useState<boolean>(false);
+  const [minNodes, setMinNodes] = useState<number>(0);
 
   const [graphData, setGraphData] = useState<any[]>([]);
   const [isGraphLoading, setIsGraphLoading] = useState(true);
   const [graphError, setGraphError] = useState<string | null>(null);
+
+  const filteredGraphData = React.useMemo(() => {
+    if (minNodes === 0) return graphData;
+
+    // 1. Separate nodes and edges
+    const nodes = graphData.filter(el => !el.data.source || !el.data.target);
+    const edges = graphData.filter(el => el.data.source && el.data.target);
+
+    // 2. Build adjacency list (treating graph as undirected for components)
+    const adj: { [key: string]: string[] } = {};
+    nodes.forEach(node => {
+      adj[node.data.id] = [];
+    });
+
+    edges.forEach(edge => {
+      const u = edge.data.source;
+      const v = edge.data.target;
+      if (adj[u] && adj[v]) {
+        adj[u].push(v);
+        adj[v].push(u);
+      }
+    });
+
+    // 3. Find connected components using BFS
+    const visited: { [key: string]: boolean } = {};
+    const componentIdMap: { [key: string]: number } = {};
+    const componentSizes: number[] = [];
+    let currentComponentId = 0;
+
+    nodes.forEach(node => {
+      const nodeId = node.data.id;
+      if (!visited[nodeId]) {
+        const comp: string[] = [];
+        const queue = [nodeId];
+        visited[nodeId] = true;
+
+        while (queue.length > 0) {
+          const curr = queue.shift()!;
+          comp.push(curr);
+          componentIdMap[curr] = currentComponentId;
+
+          const neighbors = adj[curr] || [];
+          neighbors.forEach(neighbor => {
+            if (!visited[neighbor]) {
+              visited[neighbor] = true;
+              queue.push(neighbor);
+            }
+          });
+        }
+
+        componentSizes.push(comp.length);
+        currentComponentId++;
+      }
+    });
+
+    // 4. Filter nodes
+    const keptNodeIds = new Set<string>();
+    nodes.forEach(node => {
+      const nodeId = node.data.id;
+      const compId = componentIdMap[nodeId];
+      if (compId !== undefined && componentSizes[compId] > minNodes) {
+        keptNodeIds.add(nodeId);
+      }
+    });
+
+    // 5. Keep elements
+    const filteredNodes = nodes.filter(node => keptNodeIds.has(node.data.id));
+    const filteredEdges = edges.filter(edge => keptNodeIds.has(edge.data.source) && keptNodeIds.has(edge.data.target));
+
+    return [...filteredNodes, ...filteredEdges];
+  }, [graphData, minNodes]);
 
   useEffect(() => {
     let isMounted = true;
@@ -53,8 +125,19 @@ export default function NetworkPage() {
         <div className="relative z-20 flex flex-col pointer-events-auto border-b border-slate-800/50 pb-2">
           <div className="px-6 py-4 flex justify-between items-start">
             <div className="flex flex-col items-start shrink-0">
-              <div className="bg-slate-950/80 backdrop-blur-xl border border-slate-800/60 rounded-2xl px-5 py-3 shadow-xl">
+              <div className="flex items-center gap-3 bg-slate-950/80 backdrop-blur-xl border border-slate-800/60 rounded-2xl px-5 py-3 shadow-xl">
                 <h3 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Graph Network Voyager</h3>
+                <div className="h-6 w-[1px] bg-slate-800/80" />
+                <select
+                  value={minNodes}
+                  onChange={(e) => setMinNodes(parseInt(e.target.value))}
+                  className="bg-slate-900 border border-slate-700/80 text-slate-300 text-xs rounded-lg px-3 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium cursor-pointer"
+                >
+                  <option value={0}>Show All Networks</option>
+                  <option value={3}>&gt; 3 nodes</option>
+                  <option value={4}>&gt; 4 nodes</option>
+                  <option value={5}>&gt; 5 nodes</option>
+                </select>
               </div>
               <div className="mt-3 flex items-center gap-2 bg-slate-950/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800/50">
                 <span className="inline-block h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
@@ -113,7 +196,7 @@ export default function NetworkPage() {
             </div>
           ) : (
             <GraphExplorer 
-              data={graphData} 
+              data={filteredGraphData} 
               isFastMode={isFastMode}
               onNodeClick={(id) => setSelectedEntity(id)}
             />
