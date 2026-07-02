@@ -9,7 +9,7 @@
 - [] Implement production grade dashboard with proper structure and backend API integration
   - [DONE] AlertWorkbench
   - [DONE] CaseManagement and workflow engine
-  - [] STRPreparation
+  - [DONE] STRPreparation
   - [] ScreeningModule
   - [DONE] GovernanceMIS and KPI summary
 - [DONE] AlertWorkbench textareas implement "Not Null" validation and submission handlers (STR pending)
@@ -22,13 +22,16 @@
 - [DONE] PII Masking (hiding sensitive data based on role) 
 - [DONE] Production Hardening (Environment Variables/JWT secrets) 
 - [] Graph Explorer Performance (Node clustering/pagination)
-- [] Implement STR endpoint
+- [DONE] Implement STR endpoint
 - [DONE] daily refreshed KPI summary from ETL job according to defined KPIs in spec
 - [DONE] Fix sync/async DB calls in auth.py, admin.py, reports.py
 - [DONE] Implement alert lifecycle endpoints (assign, propose, approve, reject) 
 - [DONE] Fix get_neighborhood() to use entity_id and depth parameters
 - [DONE] Restrict CORS to specific origins
 - [] Persist audit logs to database or tamper-evident log sink
+- [] Database initialization: Boot up the PostgreSQL / Apache AGE container; the DDL script 04_str_schema.sql will automatically execute on startup.
+- [] Keycloak Integration: Verify Keycloak client roles align with roles returned in auth tokens.
+
 
 ## Fix Issues
 - [DONE] Server scripts aml_platform/api/server.py

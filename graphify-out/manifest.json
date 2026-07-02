@@ -1,133 +1,807 @@
 {
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\init_keycloak.ps1": 1775730459.7663405,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\manage_aml_services.ps1": 1775730459.7663405,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\generate_openapi.py": 1780402494.1488738,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\main.py": 1775730459.763341,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\admin.py": 1775548495.5518062,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\alerts.py": 1775568992.583888,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\auth.py": 1775567687.8634024,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\cases.py": 1775730459.7623408,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\graph.py": 1775553017.4263628,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\api\\v1\\reports.py": 1780402494.1468735,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\core\\auth.py": 1780402494.1468735,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\db\\session.py": 1775546221.0520353,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\schemas\\user.py": 1775224376.6764722,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\services\\flowable_client.py": 1775730459.763341,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\services\\graph_service.py": 1775567759.1664164,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\app\\services\\pii_service.py": 1775223327.8284166,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\etl\\check_schema.py": 1775572296.3717706,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\etl\\daily_kpi_mart.py": 1780402494.1488738,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\data_gen_bulk.py": 1775553168.5341446,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\graph_loader.py": 1775553238.4096725,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\reload_env_and_demo.py": 1775553168.5441937,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\rule_engine.py": 1775553238.4096725,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\run_batch.py": 1775553238.4106734,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\run_demo_demo.py": 1775553168.5526583,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\typologies.py": 1775553168.5546584,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\eslint.config.mjs": 1775212258.1018376,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\next-env.d.ts": 1775473949.4516897,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\next.config.ts": 1775214474.956776,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\postcss.config.mjs": 1775212258.1210506,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\config.ts": 1775548668.6504526,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\layout.tsx": 1775730459.7653399,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\page.tsx": 1775569514.75239,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\layout.tsx": 1775569468.0891504,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\alerts\\page.tsx": 1775569601.4944208,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\cases\\page.tsx": 1780402494.1488738,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\governance\\page.tsx": 1780402494.1488738,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\monitoring\\page.tsx": 1780402494.1498785,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\network\\page.tsx": 1775569498.8065865,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\screening\\page.tsx": 1780402494.1498785,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\(dashboard)\\str\\page.tsx": 1780402494.1498785,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\admin\\layout.tsx": 1775548569.552302,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\admin\\roles\\page.tsx": 1775548643.3085065,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\app\\admin\\users\\page.tsx": 1775548598.0122194,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\ErrorBoundary.tsx": 1775569077.1850865,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\GraphExplorer.tsx": 1775567930.03657,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\KPICard.tsx": 1775222991.634199,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\layout\\DashboardLayout.tsx": 1775569064.3450456,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\AlertWorkbench.tsx": 1775569588.2766478,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\CaseManagement.tsx": 1775730459.7653399,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\GovernanceMIS.tsx": 1775473850.2117844,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\MonitoringFeed.tsx": 1775483856.2769756,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\ScreeningModule.tsx": 1775473832.1106193,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\components\\modules\\STRPreparation.tsx": 1775473830.0942755,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\services\\api.ts": 1775730459.7653399,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\src\\types\\models.ts": 1775730459.7663405,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\tmp\\test_pii.py": 1775223360.036415,
-  "Z:\\GITHUB\\Overwatch\\etl\\daily_pipeline.py": 1775563582.3444855,
-  "Z:\\GITHUB\\Overwatch\\etl\\debug_age.py": 1775480559.5867066,
-  "Z:\\GITHUB\\Overwatch\\etl\\repo.py": 1775563593.147575,
-  "Z:\\GITHUB\\Overwatch\\etl\\assets\\graph_projection.py": 1775482029.0836184,
-  "Z:\\GITHUB\\Overwatch\\etl\\assets\\ledger_ingest.py": 1775479236.8997793,
-  "Z:\\GITHUB\\Overwatch\\etl\\assets\\__init__.py": 1775479256.5158443,
-  "Z:\\GITHUB\\Overwatch\\tmp\\generate_fraud_data.py": 1780402494.1733828,
-  "Z:\\GITHUB\\Overwatch\\AML_spec.md": 1775210510.133452,
-  "Z:\\GITHUB\\Overwatch\\README.md": 1777622672.8987265,
-  "Z:\\GITHUB\\Overwatch\\SECURITY.md": 1775186018.263909,
-  "Z:\\GITHUB\\Overwatch\\SECURITY_SCAN_20260403.md": 1775225016.5278811,
-  "Z:\\GITHUB\\Overwatch\\todo.md": 1775827271.931553,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend_logs.txt": 1775549949.8446531,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend_logs_2.txt": 1775544656.667684,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\build_log.txt": 1775215239.8069434,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\keycloak_logs.txt": 1775549983.018234,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\requirements.txt": 1775224368.3330402,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\backend\\requirements.txt": 1775548384.6749308,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\etl\\error_trace.txt": 1775221448.2068899,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\AGENTS.md": 1775212311.4525442,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\CLAUDE.md": 1775212311.4525442,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\README.md": 1775212258.0837739,
-  "Z:\\GITHUB\\Overwatch\\graphify-out\\converted\\hk_aml_kpi_control_matrix_a5d8e57d.md": 1780402674.5248919,
-  "Z:\\GITHUB\\Overwatch\\docs\\api_reference.md": 1780402494.1548734,
-  "Z:\\GITHUB\\Overwatch\\docs\\etl_dagster_production.md": 1775488749.048421,
-  "Z:\\GITHUB\\Overwatch\\docs\\etl_python_demo.md": 1775488768.690906,
-  "Z:\\GITHUB\\Overwatch\\docs\\plan\\AML Data Model-Fiat & Stablecoin Transactions.md": 1775920382.9287934,
-  "Z:\\GITHUB\\Overwatch\\docs\\plan\\AML for Fiat & Stablecoin Transactions \u2014 Data Model.md": 1775918942.4585423,
-  "Z:\\GITHUB\\Overwatch\\docs\\plan\\aml_workflow_diagrams.html": 1775915149.2299578,
-  "Z:\\GITHUB\\Overwatch\\docs\\plan\\Project-Overwatch-Next-Generation-of-Transaction-Monitoring.md": 1776481078.9246604,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\20260407 codebase scan.md": 1775546480.2791064,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\20260407 Repo scan and doc.md": 1775526633.690895,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\20260409 multi_agent_brainstorming.md": 1775730459.7673407,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\20260501_scan.md": 1777569221.6556265,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\20260602_code_explain.md": 1780402494.1548734,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\Build a new ETL container to extract data for Tap and Go.md": 1775478463.591286,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\Fixing Backend Module Error.md": 1775470293.190651,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\HISTORY.md": 1775491152.560904,
-  "Z:\\GITHUB\\Overwatch\\graphify-out\\converted\\hk_aml_kpi_control_matrix_b444ede0.md": 1780402674.5415187,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\repository_summary.md": 1775479744.4573915,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\system_doc.md": 1775225160.3646188,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\aml-rbac-starter\\00. RBAC with postgresql and KeyCloak.md": 1775545049.4396296,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\aml-rbac-starter\\01. map this into a concrete RBAC design for your AML.md": 1775545049.3528028,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\aml-rbac-starter\\02. turn this into a full SQL starter pack and Keycloak.md": 1775544969.7434804,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\aml-rbac-starter\\04. README.md": 1775545081.7817333,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\aml-rbac-starter\\keycloak\\composite-role-plan.md": 1775545124.123562,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\debug\\ps.txt": 1775550065.606611,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\debug\\ps_a.txt": 1775550096.9707386,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260402.md": 1775149126.0394466,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260403.md": 1775220634.4506261,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260404 implementation_plan_UAM.md": 1775224140.2116573,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260404 walkthrough_pii.md": 1775223374.3738303,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260404 walkthrough_rbac.md": 1775224505.9252446,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260405 implementation_plan_explorer.md": 1775228253.0563266,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260405 implementation_plan_pii_masking.md": 1775223241.8027923,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260406 rebuilt dashboard to meet HK req walkthrough.md": 1775473967.919657,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\20260406_ETL_container_implementation_plan.md": 1775478786.230455,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\debug\\backend_logs.txt": 1775470293.1902237,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\debug\\backend_logs2.txt": 1775470293.190651,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\debug\\backend_logs3.txt": 1775470293.190651,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\debug\\backend_logs4.txt": 1775470293.190651,
-  "Z:\\GITHUB\\Overwatch\\Implementation_Plan\\debug\\backend_logs5.txt": 1775470293.190651,
-  "Z:\\GITHUB\\Overwatch\\tmp\\error.md": 1775730459.7803402,
-  "Z:\\GITHUB\\Overwatch\\tmp\\multi_agent_brainstorming.md": 1775730459.7813404,
-  "Z:\\GITHUB\\Overwatch\\docs\\10 Lessons Learned from the Overwatch Agentic Harness Implementation.pdf": 1780402494.1518793,
-  "Z:\\GITHUB\\Overwatch\\docs\\Developing Agentic Systems  10 Lessons from the Overwatch Harness & the Open-Source Ecosystem.pdf": 1780402494.1538737,
-  "Z:\\GITHUB\\Overwatch\\tmp\\AML Admin Portal \u2014 Functional & Non-Functional Requirements Specification.pdf": 1775730459.77534,
-  "Z:\\GITHUB\\Overwatch\\tmp\\Project Overwatch Business Requirements.pdf": 1775730459.77634,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\public\\file.svg": 1775212258.1267357,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\public\\globe.svg": 1775212258.1327472,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\public\\next.svg": 1775212258.1397464,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\public\\vercel.svg": 1775212258.1497655,
-  "Z:\\GITHUB\\Overwatch\\aml_platform\\frontend\\public\\window.svg": 1775212258.1658776,
-  "Z:\\GITHUB\\Overwatch\\docs\\working_doc\\Screenshot 2026-04-04 094642.png": 1775267220.733789,
-  "Z:\\GITHUB\\Overwatch\\tmp\\Screenshot 2026-04-09 111855.png": 1775730459.7803402
+  "aml_platform/backend/app/api/v1/admin.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "61b0ce511e5d1c1c91de17f913230210",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/alerts.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "e8022a711bb38a9c4fb4d51671a074a8",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/auth.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "a24a5b1bc74ca2a449d9bd31f631db0b",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/cases.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "2785dade998f137bfd0f57dad2258ed4",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/graph.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "4b8ce7cd4434d05e818ca5e9f2aa19bf",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/reports.py": {
+    "mtime": 1782967152.8769763,
+    "ast_hash": "5119dd4be990055a3f12186ad86dd1e9",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/api/v1/strs.py": {
+    "mtime": 1782978362.7563207,
+    "ast_hash": "07660706f76a8278d9d89c5ce1d0faf7",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/core/auth.py": {
+    "mtime": 1782967152.8778327,
+    "ast_hash": "d58832143725cb171829ecf2c655c91b",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/db/session.py": {
+    "mtime": 1782967152.8780382,
+    "ast_hash": "f9cb4d0d0951efbd4a1d3fc9e0ca5f10",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/main.py": {
+    "mtime": 1782978392.8594513,
+    "ast_hash": "dcb8b84ff656ded4eb6df566cd9bee81",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/schemas/str_schema.py": {
+    "mtime": 1782978321.0109742,
+    "ast_hash": "444f5e046df9afe56f5bc4b00154636c",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/schemas/user.py": {
+    "mtime": 1782967152.8782778,
+    "ast_hash": "a0cb8768ce231b067637b93936af00b1",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/services/flowable_client.py": {
+    "mtime": 1782967152.8784368,
+    "ast_hash": "01c082a7217b7530ec5eedf0094334b5",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/services/graph_service.py": {
+    "mtime": 1782967152.8784368,
+    "ast_hash": "aecd8be262645791999ea4e5dfd2684f",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/app/services/pii_service.py": {
+    "mtime": 1782967152.8784368,
+    "ast_hash": "cec9b8bad15d2639281347041d80e8f1",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/etl/check_schema.py": {
+    "mtime": 1782967152.8784368,
+    "ast_hash": "3f80a64ad32dac316938068d450ce0b9",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/etl/daily_kpi_mart.py": {
+    "mtime": 1782967152.8787491,
+    "ast_hash": "3afe03677b4d168fb3068a4f458deae1",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/generate_openapi.py": {
+    "mtime": 1782967152.8787491,
+    "ast_hash": "7832fdb0ead38b27cb76520423100557",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/init_scripts/01_rbac_initialization.sql": {
+    "mtime": 1782967152.8787491,
+    "ast_hash": "288d22321d7757225f375dd4b9edd350",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/init_scripts/02_audit_tamper_evidence.sql": {
+    "mtime": 1782967152.8789198,
+    "ast_hash": "cd75f3b819f9ccba175bcf12ba9377de",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/init_scripts/03_keycloak_initialization.sql": {
+    "mtime": 1782967152.8789198,
+    "ast_hash": "9f78f3f59d4a7aa1e424f25eb5a4bcfe",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/init_scripts/04_str_schema.sql": {
+    "mtime": 1782978270.426766,
+    "ast_hash": "722394ed3bb79ad53a7aafe3c1f1e590",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/bulk_synthetic_data.sql": {
+    "mtime": 1782967152.8829508,
+    "ast_hash": "248d86a29669351038ce96992fe65f44",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/data_gen_bulk.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "973777b449f5bf845ea81965aa9b2eda",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/graph_loader.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "6284a07c10f08e963625e56cd1bb9fbb",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/reload_env_and_demo.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "fd8c44d3a437f52b5a6baba04ab08ac4",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/rule_engine.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "d8ccc807bc6c05bb48bdae3e783ba6e5",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/run_batch.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "f1d6aed475d06d1402b8ec7a39c17bdb",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/run_demo_demo.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "2ee41a26c39d8765e776074ae0caa523",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/typologies.py": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "efee52f316360622bdb8559541252886",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/eslint.config.mjs": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/next.config.ts": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "7ae28185aa1ff7e44a468a6e60ef8b53",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/package.json": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "d47841464968fce11fcda1739545e649",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/postcss.config.mjs": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/alerts/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "ac16cb9ea95dc03ff3eb76968a6ea97f",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/cases/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "a10bce44e39c875d64fa38ff2c9bfd0b",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/governance/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "43be30ff25e82731c3f30f19085fde5a",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/layout.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "453a93dd27f6133d664bf9cd4d024ab3",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/monitoring/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "6b91e7271abd05474eafaa58f21c23eb",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/network/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "9ba1b2ccc707b9c7e6815b20700c6a3d",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/screening/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "2145c50cb92b99195952d9ecf1191191",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/(dashboard)/str/page.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "30c46a38334d2dffda158f83fbade965",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/admin/layout.tsx": {
+    "mtime": 1782967152.8869526,
+    "ast_hash": "9293f6ee68d3e5e473cdfb4ba5bc5ade",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/admin/roles/page.tsx": {
+    "mtime": 1782967152.8875482,
+    "ast_hash": "17f5152160f455fe5cd55b204839df3a",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/admin/users/page.tsx": {
+    "mtime": 1782967152.8875482,
+    "ast_hash": "4a6628e80de7095ff71fbb8c51c887a0",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/layout.tsx": {
+    "mtime": 1782967152.8875482,
+    "ast_hash": "193f95f60b9bb3162d4d9b234ded2f6b",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/app/page.tsx": {
+    "mtime": 1782967152.8875482,
+    "ast_hash": "560df5e434b71aaf2595a2818187cb85",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/ErrorBoundary.tsx": {
+    "mtime": 1782967152.8875482,
+    "ast_hash": "3a8d920f20e4487a69f75d3333eebf46",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/GraphExplorer.tsx": {
+    "mtime": 1782967152.8879871,
+    "ast_hash": "b965c05a86ee609b9628a37e353931df",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/KPICard.tsx": {
+    "mtime": 1782967152.8879871,
+    "ast_hash": "ed65c9b6ada885c6b89d6db9832d2ba1",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/layout/DashboardLayout.tsx": {
+    "mtime": 1782967152.8879871,
+    "ast_hash": "552141f8d0a3d79196ce0a1cec7f269d",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/AlertWorkbench.tsx": {
+    "mtime": 1782967152.8879871,
+    "ast_hash": "c539d6858ef9f7db698de500dd875135",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/CaseManagement.tsx": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "b0f58229a1a5831de13bcde351924321",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/GovernanceMIS.tsx": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "562f9841d751e98bf5bd13c0a0387624",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/MonitoringFeed.tsx": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "c91d3499f96fdd00869feddf608f466a",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/STRPreparation.tsx": {
+    "mtime": 1782978855.7599664,
+    "ast_hash": "0d4d75e73df8a2cdd7710d42b76c67cd",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/components/modules/ScreeningModule.tsx": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "58892cf144c911475296a66fee7e8aa7",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/config.ts": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "87bf0d76ef93fc9db9f9ba0662dfdab8",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/services/api.ts": {
+    "mtime": 1782978735.4743645,
+    "ast_hash": "cfb0bb6334f4b13951524bdb22bb77a6",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/src/types/models.ts": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "219486ec2a8b6d7886f791f072f5caeb",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/tsconfig.json": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": ""
+  },
+  "aml_platform/init-scripts/01-init.sql": {
+    "mtime": 1782967152.888263,
+    "ast_hash": "fed9f73586494f6a44f2627628ac98a2",
+    "semantic_hash": ""
+  },
+  "aml_platform/init-scripts/02-regulatory-procedures.sql": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "9bea2e151e869d6f71d59a957680b55c",
+    "semantic_hash": ""
+  },
+  "aml_platform/init-scripts/03-graph-schema.sql": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "4989fff55bf42d8c822ec851688a4656",
+    "semantic_hash": ""
+  },
+  "aml_platform/init-scripts/04-users-and-workflow.sql": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "a97abaeb35c36c78a2f6dceacac3dbc8",
+    "semantic_hash": ""
+  },
+  "aml_platform/init_keycloak.ps1": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "6cbe85f4db28e107596c1adc3a7cd622",
+    "semantic_hash": ""
+  },
+  "aml_platform/manage_aml_services.ps1": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "4e10a72aea0983fbd09ea5ebeb32e06e",
+    "semantic_hash": ""
+  },
+  "aml_platform/tmp/test_pii.py": {
+    "mtime": 1782967152.8891106,
+    "ast_hash": "bcab37fc1af00413c1d39062e5834a2d",
+    "semantic_hash": ""
+  },
+  "aml_platform/tmp/test_strs.py": {
+    "mtime": 1782978423.1983745,
+    "ast_hash": "0964e222e21b5c2110690fa0cfabc98b",
+    "semantic_hash": ""
+  },
+  "docs/openapi.json": {
+    "mtime": 1782967152.8929505,
+    "ast_hash": "7ab751edacc67770973f3a8e380e7041",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/keycloak/realm-overwatch-aml.json": {
+    "mtime": 1782967152.8976517,
+    "ast_hash": "9e57663177a24c54eb18ba1579ed9f2e",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/01_extensions.sql": {
+    "mtime": 1782967152.8976517,
+    "ast_hash": "532fd680d89e895e71af985c64e22395",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/02_schema.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "51021e23eb72190292a06b86bc026f7c",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/03_seed_rbac.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "4bfa9ae8573ba1bf1d7de67a65a9d7b8",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/04_rls.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "4cb4f9d9f710603df90cac51d090fb17",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/05_helper_functions.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "f7de1768a805e86c345ea9e10f85acba",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/06_example_bootstrap.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "28dfd2ff6f8974342ea59e28a3a0b99e",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/sql/07_runtime_usage.sql": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "65da3c35a455ccca60aeff7d2dc75b7d",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/debug/graph_output.json": {
+    "mtime": 1782967152.8977442,
+    "ast_hash": "7bf9b2487a34af75998534a07f9628e8",
+    "semantic_hash": ""
+  },
+  "etl/assets/__init__.py": {
+    "mtime": 1782967152.898621,
+    "ast_hash": "db65ab33a5f050d405474baeae0e1052",
+    "semantic_hash": ""
+  },
+  "etl/assets/graph_projection.py": {
+    "mtime": 1782967152.8987494,
+    "ast_hash": "c44f3acb278a282991ca899787940c8d",
+    "semantic_hash": ""
+  },
+  "etl/assets/ledger_ingest.py": {
+    "mtime": 1782967152.8987494,
+    "ast_hash": "b504bef657a310485d6466becce5b02e",
+    "semantic_hash": ""
+  },
+  "etl/daily_pipeline.py": {
+    "mtime": 1782967152.8987494,
+    "ast_hash": "3954ce8e01178dbf66c4e916f52dca37",
+    "semantic_hash": ""
+  },
+  "etl/debug_age.py": {
+    "mtime": 1782967152.8987494,
+    "ast_hash": "ba905b2c8f99f9c7d87e7fa116a580ae",
+    "semantic_hash": ""
+  },
+  "etl/repo.py": {
+    "mtime": 1782967152.9009504,
+    "ast_hash": "d9d00f2103b8dac405ea4c23b584f545",
+    "semantic_hash": ""
+  },
+  "etl/sql/init_schema.sql": {
+    "mtime": 1782967152.9019504,
+    "ast_hash": "fa191587280bba4fa559c23bcf084b55",
+    "semantic_hash": ""
+  },
+  "tmp/generate_fraud_data.py": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "52b1cca4932b84cb6a0c70950a31dc9b",
+    "semantic_hash": ""
+  },
+  "tmp/seed_operational_data.sql": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "f9db673aa983747702310fcb4d073169",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1782967152.8735716,
+    "ast_hash": "a0ba2b649968c416a1f2ac2f40e4907d",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1782967152.8741663,
+    "ast_hash": "704a84dd434a7f217f5b3714a4a7ad05",
+    "semantic_hash": ""
+  },
+  ".github/workflows/generate-docs.yml": {
+    "mtime": 1782967152.8742685,
+    "ast_hash": "0a99634c6f47a2202c7480288ef66be4",
+    "semantic_hash": ""
+  },
+  "AML_spec.md": {
+    "mtime": 1782967152.8742685,
+    "ast_hash": "61e592b342d211f68eed4559c57d4d40",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260402.md": {
+    "mtime": 1782967152.8742685,
+    "ast_hash": "badb14e6be100b06b894ad7eee949423",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260403.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "6df9a85ff0c0088c0ff9210013fe5b6a",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260404 implementation_plan_UAM.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "e0ac260ea771fbd93f39057e155c820b",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260404 walkthrough_pii.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "901113695f2cce23243756a8d908d0bf",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260404 walkthrough_rbac.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "89cf2cf7d780d9639810103e6529a957",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260405 implementation_plan_explorer.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "1b0bca33432595892ba3a6b990110206",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260405 implementation_plan_pii_masking.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "b15d83188acae6ed976e87ae9683a338",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260406 rebuilt dashboard to meet HK req walkthrough.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "afe8b0a18791acce8ee52d71e22d34fb",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/20260406_ETL_container_implementation_plan.md": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "edcc853781294e30873826f54da35c2b",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/debug/backend_logs.txt": {
+    "mtime": 1782967152.874714,
+    "ast_hash": "1770cda351fe362d39644772b88535fe",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/debug/backend_logs2.txt": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "cf9f3d81927e281348dbe641cd3a075e",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/debug/backend_logs3.txt": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "1bb7849d597a625371136a7ef02d4f49",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/debug/backend_logs4.txt": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "ec13e473faad5bc6c3e6c3e9b8d5904c",
+    "semantic_hash": ""
+  },
+  "Implementation_Plan/debug/backend_logs5.txt": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "0ca3e4574566ac556aaf6c88049dd5af",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "654826d1085b9fa675fd9800c73fb218",
+    "semantic_hash": ""
+  },
+  "SECURITY.md": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "b2d425cde866acbb8760d9ec036143ab",
+    "semantic_hash": ""
+  },
+  "SECURITY_SCAN_20260403.md": {
+    "mtime": 1782967152.875854,
+    "ast_hash": "e5c17f92db9109f447e1a216aa2fdfd8",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend/requirements.txt": {
+    "mtime": 1782967152.8789198,
+    "ast_hash": "ee1df6e46220ada9b9decee8f2cfa60d",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend_logs.txt": {
+    "mtime": 1782967152.8789198,
+    "ast_hash": "a1a6d18a6012e4cff98361e7fa9ac2ae",
+    "semantic_hash": ""
+  },
+  "aml_platform/backend_logs_2.txt": {
+    "mtime": 1782967152.8789198,
+    "ast_hash": "6d7e461314f5f63915dc8fdc8253ef45",
+    "semantic_hash": ""
+  },
+  "aml_platform/build_log.txt": {
+    "mtime": 1782967152.8789508,
+    "ast_hash": "3e56b83fb37f23a780fccc8e0ed13553",
+    "semantic_hash": ""
+  },
+  "aml_platform/docker-compose.yml": {
+    "mtime": 1782967152.8789508,
+    "ast_hash": "8862f7af1e55176402a26aa68b3bcc89",
+    "semantic_hash": ""
+  },
+  "aml_platform/etl/error_trace.txt": {
+    "mtime": 1782967152.8839507,
+    "ast_hash": "be9ec967a1344cd0b8537a7fa8a468d8",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/AGENTS.md": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "9e09241799026ac05be315a2f0b50055",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/CLAUDE.md": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "5c27369b226fcf2be8a6cfe52224e767",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/README.md": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
+    "semantic_hash": ""
+  },
+  "aml_platform/keycloak_logs.txt": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "18a7eab56c4b34666c8f653d75c08e45",
+    "semantic_hash": ""
+  },
+  "aml_platform/requirements.txt": {
+    "mtime": 1782967152.8886976,
+    "ast_hash": "ac60fc1f45a0d12c56f1857279ea15b1",
+    "semantic_hash": ""
+  },
+  "docs/api_reference.md": {
+    "mtime": 1782967152.8929505,
+    "ast_hash": "0f3c6189fd06b7dc00f0148ee4554466",
+    "semantic_hash": ""
+  },
+  "docs/etl_dagster_production.md": {
+    "mtime": 1782967152.8929505,
+    "ast_hash": "5818b1d0ecfff24e098d10802484b2b8",
+    "semantic_hash": ""
+  },
+  "docs/etl_python_demo.md": {
+    "mtime": 1782967152.8929505,
+    "ast_hash": "6ce469816a9ef39a88c585b630fd0c16",
+    "semantic_hash": ""
+  },
+  "docs/plan/AML Data Model-Fiat & Stablecoin Transactions.md": {
+    "mtime": 1782967152.8943672,
+    "ast_hash": "657e96870fc2939bbb24d903d1930b25",
+    "semantic_hash": ""
+  },
+  "docs/plan/AML for Fiat & Stablecoin Transactions \u2014 Data Model.md": {
+    "mtime": 1782967152.8943672,
+    "ast_hash": "96237a4bcb05001b08c851f22a33a9f9",
+    "semantic_hash": ""
+  },
+  "docs/plan/Project-Overwatch-Next-Generation-of-Transaction-Monitoring.md": {
+    "mtime": 1782967152.8943672,
+    "ast_hash": "01bdf15dcb5bb73f43c83996ce5b5901",
+    "semantic_hash": ""
+  },
+  "docs/plan/aml_workflow_diagrams.html": {
+    "mtime": 1782967152.8943672,
+    "ast_hash": "c266405b58d317f5f5db64545678a812",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/20260407 Repo scan and doc.md": {
+    "mtime": 1782967152.8943672,
+    "ast_hash": "6d7bf302e83a29391788b033efe1b911",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/20260407 codebase scan.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "2e45e00ab2e895f5dae00f38b8b06254",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/20260409 multi_agent_brainstorming.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "4f5f54716b8b188ff034b8cc3c247341",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/20260501_scan.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "c0e60ffddc898cf6cdf05807a7c158e6",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/20260602_code_explain.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "c67a4256190bfb5004d2a35dd26549e1",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/Build a new ETL container to extract data for Tap and Go.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "21a7b124817c4976130dac7c7cf25915",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/Fixing Backend Module Error.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "ff266cbc56715790cc83c7544fc265d9",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/HISTORY.md": {
+    "mtime": 1782967152.8957582,
+    "ast_hash": "911401837d1da255985655a663553652",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/00. RBAC with postgresql and KeyCloak.md": {
+    "mtime": 1782967152.8959506,
+    "ast_hash": "57ed40922c12af0e60ec9a83c098d320",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/01. map this into a concrete RBAC design for your AML.md": {
+    "mtime": 1782967152.8974514,
+    "ast_hash": "16c68a6c2f2a9ac136bc5cbe52c11b00",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/02. turn this into a full SQL starter pack and Keycloak.md": {
+    "mtime": 1782967152.8974514,
+    "ast_hash": "43a2fb1b18701c87e7687ec8e32dd3f5",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/04. README.md": {
+    "mtime": 1782967152.8974514,
+    "ast_hash": "8967e27a0bf467d0010c8dfee7fcc042",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/aml-rbac-starter/keycloak/composite-role-plan.md": {
+    "mtime": 1782967152.8974514,
+    "ast_hash": "86cf9ed947f533c2451a6aa52e1ebfa8",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/debug/ps.txt": {
+    "mtime": 1782967152.8981328,
+    "ast_hash": "f3fad3d58df0a31babad14cb2a1aff9a",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/debug/ps_a.txt": {
+    "mtime": 1782967152.8981328,
+    "ast_hash": "c592f280cbe815163c211b6b9246624e",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/repository_summary.md": {
+    "mtime": 1782967152.8981328,
+    "ast_hash": "b063f9b4d2df51f174e1d1143f7fb615",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/system_doc.md": {
+    "mtime": 1782967152.8981328,
+    "ast_hash": "36e2157c6900368be0c5d8dcb09149db",
+    "semantic_hash": ""
+  },
+  "etl/.nux/nux.yaml": {
+    "mtime": 1782967152.8984458,
+    "ast_hash": "73ddfe8904dc25d3277f5908d99143ff",
+    "semantic_hash": ""
+  },
+  "etl/dagster.yaml": {
+    "mtime": 1782967152.8987494,
+    "ast_hash": "5b2337c2c96b5971fe7d8549a9178ff0",
+    "semantic_hash": ""
+  },
+  "etl/workspace.yaml": {
+    "mtime": 1782967152.9075532,
+    "ast_hash": "d028eaec026bc22faf2dcc57839df39b",
+    "semantic_hash": ""
+  },
+  "tmp/error.md": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "c40454b4fc2cb585da147c0815498dc0",
+    "semantic_hash": ""
+  },
+  "tmp/multi_agent_brainstorming.md": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "4f5f54716b8b188ff034b8cc3c247341",
+    "semantic_hash": ""
+  },
+  "todo.md": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "5f6808dc32de6fcc5c60c289bd09d34b",
+    "semantic_hash": ""
+  },
+  "docs/10 Lessons Learned from the Overwatch Agentic Harness Implementation.pdf": {
+    "mtime": 1782967152.8891106,
+    "ast_hash": "edd9fa64ad42c3fe132b437b8b90b00f",
+    "semantic_hash": ""
+  },
+  "docs/Developing Agentic Systems  10 Lessons from the Overwatch Harness & the Open-Source Ecosystem.pdf": {
+    "mtime": 1782967152.8919506,
+    "ast_hash": "231fa3c9085162cd3f0d918dae2513db",
+    "semantic_hash": ""
+  },
+  "tmp/AML Admin Portal \u2014 Functional & Non-Functional Requirements Specification.pdf": {
+    "mtime": 1782967152.9129503,
+    "ast_hash": "65b6fa4070ae055058c3ff026f20fcfc",
+    "semantic_hash": ""
+  },
+  "tmp/Project Overwatch Business Requirements.pdf": {
+    "mtime": 1782967152.9139502,
+    "ast_hash": "205c59cfccf5e33009598466b8c27104",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/public/file.svg": {
+    "mtime": 1782967152.8859074,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/public/globe.svg": {
+    "mtime": 1782967152.8867922,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/public/next.svg": {
+    "mtime": 1782967152.8867922,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/public/vercel.svg": {
+    "mtime": 1782967152.8867922,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": ""
+  },
+  "aml_platform/frontend/public/window.svg": {
+    "mtime": 1782967152.8867922,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": ""
+  },
+  "docs/working_doc/Screenshot 2026-04-04 094642.png": {
+    "mtime": 1782967152.8959506,
+    "ast_hash": "01a3c09ad0f54c51d6bececc064c2aee",
+    "semantic_hash": ""
+  },
+  "tmp/Screenshot 2026-04-09 111855.png": {
+    "mtime": 1782967152.9169502,
+    "ast_hash": "e9fb314f830ab75cea960ff9c83a6e6c",
+    "semantic_hash": ""
+  }
 }
