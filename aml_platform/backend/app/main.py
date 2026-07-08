@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.v1 import alerts, cases, graph, auth, admin, reports
+from app.api.v1 import alerts, cases, graph, auth, admin, reports, strs
 from contextlib import asynccontextmanager
 from app.db.session import init_db_pool, close_db_pool
 from app.services import flowable_client
@@ -40,6 +40,7 @@ app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
 app.include_router(cases.router, prefix="/api/v1/cases", tags=["Cases"])
 app.include_router(graph.router, prefix="/api/v1/graph", tags=["Graph Explorer"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
+app.include_router(strs.router, prefix="/api/v1/str", tags=["STR"])
 
 @app.get("/health")
 def health_check():
