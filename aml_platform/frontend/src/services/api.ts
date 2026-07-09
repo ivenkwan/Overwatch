@@ -126,5 +126,63 @@ export const api = {
       if (!res.ok) throw new Error("Failed to fetch daily KPIs");
       return res.json();
     }
+  },
+
+  strs: {
+    async fetchAll() {
+      const res = await fetch(`${API_BASE_URL}/str/`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch STRs");
+      return res.json();
+    },
+
+    async fetchOne(strId: string) {
+      const res = await fetch(`${API_BASE_URL}/str/${encodeURIComponent(strId)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch STR detail");
+      return res.json();
+    },
+
+    async create(caseId?: string) {
+      const body: any = {};
+      if (caseId) body.case_id = caseId;
+      
+      const res = await fetch(`${API_BASE_URL}/str/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error("Failed to create STR");
+      return res.json();
+    },
+
+    async update(strId: string, payload: {
+      case_id?: string;
+      triggering_factors?: string;
+      subject_background?: string;
+      digital_footprints?: string;
+      transaction_summary?: string;
+    }) {
+      const res = await fetch(`${API_BASE_URL}/str/${encodeURIComponent(strId)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Failed to update STR");
+      return res.json();
+    },
+
+    async submit(strId: string) {
+      const res = await fetch(`${API_BASE_URL}/str/${encodeURIComponent(strId)}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to submit STR to JFIU");
+      return res.json();
+    }
   }
 };
