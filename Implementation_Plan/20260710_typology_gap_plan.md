@@ -108,3 +108,48 @@ Sequenced so each phase is independently shippable and unblocks the next. Target
 ## 4. Priority call
 
 If only one phase ships first, it is **Phase 0 + 1.2 (Cross-Rail Layering)**: the scaffolding makes every later scenario cheap, and Cross-Rail Layering is the single scenario that justifies the platform's existence ("entirely invisible to siloed monitoring systems" — v5 spec). Rapid Movement (1.1) is a same-day fix and should ride along to close the regression.
+
+> **Update (2026-07-10):** on review, Cross-Rail Layering (1.2) is **blocked** — see §5.2. Phase 0 + 1.1 + 1.3 shipped instead.
+
+---
+
+## 5. Execution log & review corrections (2026-07-10)
+
+### 5.1 Shipped this increment (Phase 0 + Phase 1.1 + 1.3)
+
+| Item | Artifact | Status |
+|---|---|---|
+| 0.1 Alerts schema v5 | [init-scripts/05-alert-schema-v5.sql](../aml_platform/init-scripts/05-alert-schema-v5.sql) | done — additive `ALTER`s (scenario_code/category/rail/ml_typology/window/rule_version) + indexes |
+| 0.2 Scenario registry | [etl/scenarios.py](../aml_platform/etl/scenarios.py) | done — 6 scenarios, v5 enums, `RULE_VERSION` |
+| 0.3 Parameterized thresholds | `scenarios.DEFAULT_PARAMS` + `rule_engine.resolve_params()` (env overrides) | done |
+| 0.5 Migrate existing 4 rules | moved into registry verbatim | done |
+| 1.1 Rapid Movement (regression fix) | `SCN_RAPID_MVMT_01` | done |
+| 1.3 Rapid Layering realtime | `SCN_LAYER_RAPID_01` | done |
+| 0.4 Contract tests | [etl/test_scenarios.py](../aml_platform/etl/test_scenarios.py) | done — **15/15 passing** |
+| — rule_engine rewired to registry | [etl/rule_engine.py](../aml_platform/etl/rule_engine.py) | done — enriched alert insert |
+| — backward-compat shim | [etl/typologies.py](../aml_platform/etl/typologies.py) | done — `TYPOLOGIES` derived from registry |
+
+Run tests without a DB: `python aml_platform/etl/test_scenarios.py`
+
+### 5.2 Deferred — blocked, with prerequisite
+
+- **1.2 Cross-Rail Layering (`SCN_CROSS_RAIL_LAYER_01`)** — BLOCKED. The v5 scenario requires "stablecoin inflow → fiat outflow, **same beneficial owner**." The graph ([graph_loader.py](../aml_platform/etl/graph_loader.py)) only sets `Entity{id, system}` — there is **no party / beneficial-owner dimension** linking fiat accounts to wallets. Prerequisite: add a `party`/UBO model and a graph edge linking accounts/wallets to beneficial owners. Until then a cross-rail rule would be a weak "different rails near each other" heuristic, not the spec's intent.
+- **Phase 2 (Velocity, Dormant, Profile Mismatch, Structuring-by-window + HKD thresholds)** — BLOCKED. Requires `customer_behaviour_baseline` / `wallet_behaviour_baseline` / `party.expected_txn_profile` / `account.account_status` tables (none exist), and amounts are stored as **USD** (`amount_usd`) while the v5 thresholds are **HKD** (120k CTR / 8k Travel Rule). Prerequisite: the baseline-table ETL + an HKD amount column (or FX rate).
+- **Phase 3 (Blockchain risk, Unhosted wallet, Mixer, Travel Rule, fuzzy sanctions)** — BLOCKED on the wallet-analytics adapter feed + baseline tables.
+- **Phase 4 (Betweenness / Louvain / formal cycle)** — separate graph-analytics effort.
+- **Phase 5 (Dagster T+1 + realtime scheduling)** — belongs in the newer root [`etl/`](../etl/) Dagster tree, not `aml_platform/etl/`. Separate migration.
+
+### 5.3 Review corrections to the original plan
+
+- The alerts migration is **`05`**, not `04` — `04-users-and-workflow.sql` already exists.
+- There are **two ETL trees**: the typology rules in `aml_platform/etl/` and a newer Dagster pipeline in root `etl/`. Phase 5 must target the Dagster tree.
+- The graph is **USD-denominated** and **has no rail/UBO properties** beyond `system` — this is what blocks 1.2 and the Phase 2/3 thresholds.
+
+### 5.4 Verification caveat (honesty)
+
+Cypher correctness could **not** be live-fired here — no Docker/Postgres+AGE runtime (the 20260402 walkthrough notes the same constraint). The 4 migrated rules are preserved verbatim from the prior build; the 2 new rules reuse its timestamp-subtraction idiom so they validate together. **Before merge to production, run the live verification procedure:**
+
+1. `cd aml_platform && docker-compose up -d`
+2. Apply init scripts in order (01–05), then load demo data (`etl/run_demo_demo.py` or `reload_env_and_demo.py`).
+3. `python etl/rule_engine.py` and confirm 6 scenarios execute; check `SELECT alert_type, severity, scenario_code FROM ag_catalog.alerts;` — expect rows for the seeded circular / smurfing patterns and **no** unhandled rule errors in the log.
+4. Tune a threshold via env (`SMURFING_TOTAL_USD=8000 python etl/rule_engine.py`) and confirm the alert count changes — proving the param thread-through end to end.
