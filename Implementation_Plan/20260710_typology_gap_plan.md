@@ -273,8 +273,8 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 - [ ] **U4.2** Back-fill note: existing aml_network edges need re-projection (`run_graph_promotion()` re-run) to gain `ts`; document in the runbook. *(code migration done; back-fill is an operational runbook step — see U7.2)*
 
 #### Phase U2 — Canonical registry + renderer
-- [ ] **U2.1** `aml_detection/registry.py`: merge the 7 aml_network + 4 tap_and_go scenarios into ONE abstract registry, **deduplicating** the overlaps (Structuring, Circular, Rapid Movement exist in both → become single abstract scenarios rendered per profile). Add `requires_capabilities` to scenarios that need the party dimension (Cross-Rail).
-- [ ] **U2.2** `aml_detection/render.py`: the renderer — abstract scenario + profile + resolved params/currency → concrete Cypher (substitute `account_label`, `transfer_label`, `prop_value`, `prop_ts`, `prop_ref`, `graph_name`; apply per-currency threshold).
+- [x] **U2.1** `aml_detection/registry.py`: merge the 7 aml_network + 4 tap_and_go scenarios into ONE abstract registry, **deduplicating** the overlaps (Structuring, Circular, Rapid Movement exist in both → become single abstract scenarios rendered per profile). Add `requires_capabilities` to scenarios that need the party dimension (Cross-Rail). *(SCOPE NOTE: the tap_and_go SQL velocity rule `TG_SCN_VELOCITY_BURST_01` is NOT ported — it's a SQL window rule with no aml_network equivalent and doesn't fit the abstract-Cypher model; it stays in `etl/detection.py` until the engine grows SQL-rule support. Registry = 7 abstract Cypher scenarios.)*
+- [x] **U2.2** `aml_detection/render.py`: the renderer — abstract scenario + profile + resolved params/currency → concrete Cypher (substitute `account_label`, `transfer_label`, `prop_value`, `prop_ts`, `prop_ref`, `graph_name`; apply per-currency threshold).
 - [ ] **U2.3** Capability gating: scenario declares `requires_capabilities` (e.g. `PARTY_DIMENSION`); engine skips with a guidance log when the profile lacks it (generalises the aml_network-only label gate from §6.1).
 
 #### Phase U3 — Unified engine
@@ -289,7 +289,7 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 #### Phase U6 — Tests (authored alongside each phase; collected here)
 - [ ] **U6.1** `test_contract.py`: `Scenario`/`GraphProfile`/`Capabilities` invariants (required fields, enum validity, unique codes).
 - [ ] **U6.2** `test_currency.py`: per-currency resolution + FX-hook behaviour.
-- [ ] **U6.3** `test_render.py`: **snapshot** concrete Cypher per profile (aml_network + tap_and_go) for every scenario; assert well-formed + correct label/property/currency substitution. This is where AGE label-union support gets proven out.
+- [x] **U6.3** `test_render.py`: **snapshot** concrete Cypher per profile (aml_network + tap_and_go) for every scenario; assert well-formed + correct label/property/currency substitution. This is where AGE label-union support gets proven out. *(12/12 passing — label-unions render incl. `[PAID|TRANSFERRED*2..5]`; exact golden snapshots lock the 3 deduped scenarios. NOTE: proves the rendered STRING; live AGE acceptance of multi-label variable paths still needs the U7.2 check, fallback = per-label UNION queries.)*
 - [ ] **U6.4** `test_engine.py`: engine over a fake cursor — capability gating fires, per-rule isolation, alert sinking through both `AlertSink` variants.
 - [ ] **U6.5** `test_profiles.py`: each profile resolves every abstract field (no missing props); currency/threshold coverage for each scenario the profile will run.
 - [ ] **U6.6** Regression: port/keep the existing 18 (aml_platform) + 9 (tap_and_go) contract tests green against the shims, or migrate them into `aml_detection/tests/`.
