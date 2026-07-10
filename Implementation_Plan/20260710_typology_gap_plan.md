@@ -264,8 +264,8 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 #### Phase U1 — Shared core skeleton (new top-level package `aml_detection/`)
 - [x] **U1.1** Create `aml_detection/` package (`__init__.py`); decide import boundary (no dagster/psycopg2 at import time — pass connections in).
 - [x] **U1.2** `aml_detection/contract.py`: enums (`Category`, `Rail`, `Severity`, `Currency`), `Scenario` dataclass, `GraphProfile` dataclass, `Capabilities` dataclass.
-- [ ] **U1.3** `aml_detection/currency.py`: `CurrencyResolver` (per-currency threshold lookup + reserved FX-hook) with unit tests.
-- [ ] **U1.4** `aml_detection/profiles/aml_network.py` + `tap_and_go.py`: instantiate the two `GraphProfile` objects.
+- [x] **U1.3** `aml_detection/currency.py`: `CurrencyResolver` (per-currency threshold lookup + reserved FX-hook) with unit tests.
+- [x] **U1.4** `aml_detection/profiles/aml_network.py` + `tap_and_go.py`: instantiate the two `GraphProfile` objects.
 - [ ] **U1.5** `aml_detection/alerts.py`: `AlertSink` — schema-qualified insert adapter that handles the column-superset diff (`ag_catalog.alerts` has extra `alert_type`/`ml_typology`/`window_*`; `core.alerts` does not) by inserting only columns the target table exposes.
 
 #### Phase U4 — Prereq: normalise aml_network timestamps to epoch (enables unified time-window rules)
