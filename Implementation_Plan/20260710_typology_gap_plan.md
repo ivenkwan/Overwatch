@@ -266,7 +266,7 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 - [x] **U1.2** `aml_detection/contract.py`: enums (`Category`, `Rail`, `Severity`, `Currency`), `Scenario` dataclass, `GraphProfile` dataclass, `Capabilities` dataclass.
 - [x] **U1.3** `aml_detection/currency.py`: `CurrencyResolver` (per-currency threshold lookup + reserved FX-hook) with unit tests.
 - [x] **U1.4** `aml_detection/profiles/aml_network.py` + `tap_and_go.py`: instantiate the two `GraphProfile` objects.
-- [ ] **U1.5** `aml_detection/alerts.py`: `AlertSink` — schema-qualified insert adapter that handles the column-superset diff (`ag_catalog.alerts` has extra `alert_type`/`ml_typology`/`window_*`; `core.alerts` does not) by inserting only columns the target table exposes.
+- [x] **U1.5** `aml_detection/alerts.py`: `AlertSink` — schema-qualified insert adapter that handles the column-superset diff (`ag_catalog.alerts` has extra `alert_type`/`ml_typology`/`window_*`; `core.alerts` does not) by inserting only columns the target table exposes.
 
 #### Phase U4 — Prereq: normalise aml_network timestamps to epoch (enables unified time-window rules)
 - [x] **U4.1** Migrate `aml_platform/etl/graph_loader.py` to project `ts` (epoch) on `Transfer` edges alongside the existing ISO `timestamp` (mirror what tap_and_go already does). Additive — keep `timestamp` for back-compat.
@@ -275,11 +275,11 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 #### Phase U2 — Canonical registry + renderer
 - [x] **U2.1** `aml_detection/registry.py`: merge the 7 aml_network + 4 tap_and_go scenarios into ONE abstract registry, **deduplicating** the overlaps (Structuring, Circular, Rapid Movement exist in both → become single abstract scenarios rendered per profile). Add `requires_capabilities` to scenarios that need the party dimension (Cross-Rail). *(SCOPE NOTE: the tap_and_go SQL velocity rule `TG_SCN_VELOCITY_BURST_01` is NOT ported — it's a SQL window rule with no aml_network equivalent and doesn't fit the abstract-Cypher model; it stays in `etl/detection.py` until the engine grows SQL-rule support. Registry = 7 abstract Cypher scenarios.)*
 - [x] **U2.2** `aml_detection/render.py`: the renderer — abstract scenario + profile + resolved params/currency → concrete Cypher (substitute `account_label`, `transfer_label`, `prop_value`, `prop_ts`, `prop_ref`, `graph_name`; apply per-currency threshold).
-- [ ] **U2.3** Capability gating: scenario declares `requires_capabilities` (e.g. `PARTY_DIMENSION`); engine skips with a guidance log when the profile lacks it (generalises the aml_network-only label gate from §6.1).
+- [x] **U2.3** Capability gating: scenario declares `requires_capabilities` (e.g. `PARTY_DIMENSION`); engine skips with a guidance log when the profile lacks it (generalises the aml_network-only label gate from §6.1).
 
 #### Phase U3 — Unified engine
-- [ ] **U3.1** `aml_detection/engine.py`: `detect(profile, conn)` — introspect graph capabilities (labels), iterate registry, render per profile, gate, execute, sink via `AlertSink`; return a run summary. No dagster/psycopg2 imports at module top (connection passed in).
-- [ ] **U3.2** Per-rule error isolation (rollback + log + continue) — port the pattern both existing engines already use.
+- [x] **U3.1** `aml_detection/engine.py`: `detect(profile, conn)` — introspect graph capabilities (labels), iterate registry, render per profile, gate, execute, sink via `AlertSink`; return a run summary. No dagster/psycopg2 imports at module top (connection passed in).
+- [x] **U3.2** Per-rule error isolation (rollback + log + continue) — port the pattern both existing engines already use. *(Refined: commit-per-rule so a later rollback cannot drop earlier rules' alerts — stronger than the original engines' single end-commit.)*
 
 #### Phase U5 — Wire both consumers to the shared engine
 - [ ] **U5.1** aml_platform: rewrite `aml_platform/etl/rule_engine.py` to call `aml_detection.engine.detect(AML_NETWORK_PROFILE, conn)`; reduce `scenarios.py`/`typologies.py` to back-compat shims.
