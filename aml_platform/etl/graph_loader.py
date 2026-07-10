@@ -29,14 +29,16 @@ def promote_fiat_to_graph(cur, super_nodes):
     """
     Translates tabular SCREENED fiat elements into openCypher MERGE commands.
     """
-    cur.execute("SELECT transfer_id, sender_account, receiver_account, amount_usd, transaction_timestamp FROM ag_catalog.staging_fiat_raw WHERE status = 'SCREENED';")
+    cur.execute("SELECT transfer_id, sender_account, receiver_account, amount_usd, transaction_timestamp, COALESCE(EXTRACT(EPOCH FROM transaction_timestamp)::bigint, 0) AS ts_epoch FROM ag_catalog.staging_fiat_raw WHERE status = 'SCREENED';")
     records = cur.fetchall()
-    
+
     for record in records:
-        transfer_id, sender, receiver, amount, timestamp = record
+        transfer_id, sender, receiver, amount, timestamp, ts_epoch = record
         sender_lbl = "SuperNode" if sender in super_nodes else "Entity"
         rec_lbl = "SuperNode" if receiver in super_nodes else "Entity"
 
+        # 'ts' (epoch seconds) added for unified time-window detection (ADR 0001 / plan U4);
+        # ISO 'timestamp' kept for back-compat.
         cypher = f"""
         SELECT * FROM cypher('aml_network', $$
             MERGE (s:{sender_lbl} {{id: '{sender}', system: 'FIAT'}})
@@ -44,6 +46,7 @@ def promote_fiat_to_graph(cur, super_nodes):
             CREATE (s)-[t:Transfer {{
                 amount_usd: {amount},
                 timestamp: '{timestamp}',
+                ts: {ts_epoch},
                 ref_id: '{transfer_id}'
             }}]->(r)
         $$) as (v agtype);
@@ -57,11 +60,11 @@ def promote_crypto_to_graph(cur, super_nodes):
     """
     Translates Tabular SCREENED crypto elements into openCypher MERGE commands.
     """
-    cur.execute("SELECT tx_hash, sender_wallet, receiver_wallet, volume_usd, network, asset_id, transaction_timestamp FROM ag_catalog.staging_crypto_raw WHERE status = 'SCREENED';")
+    cur.execute("SELECT tx_hash, sender_wallet, receiver_wallet, volume_usd, network, asset_id, transaction_timestamp, COALESCE(EXTRACT(EPOCH FROM transaction_timestamp)::bigint, 0) AS ts_epoch FROM ag_catalog.staging_crypto_raw WHERE status = 'SCREENED';")
     records = cur.fetchall()
-    
+
     for record in records:
-        tx_hash, sender, receiver, amount, network, asset, timestamp = record
+        tx_hash, sender, receiver, amount, network, asset, timestamp, ts_epoch = record
         sender_lbl = "SuperNode" if sender in super_nodes else "Entity"
         rec_lbl = "SuperNode" if receiver in super_nodes else "Entity"
 
@@ -73,6 +76,7 @@ def promote_crypto_to_graph(cur, super_nodes):
                 amount_usd: {amount},
                 asset: '{asset}',
                 timestamp: '{timestamp}',
+                ts: {ts_epoch},
                 ref_id: '{tx_hash}'
             }}]->(r)
         $$) as (v agtype);

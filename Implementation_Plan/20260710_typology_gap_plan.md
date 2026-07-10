@@ -258,8 +258,8 @@ Default: **per-currency thresholds** via a `CurrencyResolver` — a scenario dec
 Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests authored alongside each phase (test-first where feasible).
 
 #### Phase U0 — Decide & document (no code)
-- [ ] **U0.1** Write ADR `docs/adr/0001-unified-detection-engine.md`: record Option A chosen, Option B rejected (with reasons), the abstract contract, profile spec.
-- [ ] **U0.2** In the ADR, define the canonical abstract contract (§7.3) and profile fields (§7.4) as the spec the rest of the work implements against.
+- [x] **U0.1** Write ADR `docs/adr/0001-unified-detection-engine.md`: record Option A chosen, Option B rejected (with reasons), the abstract contract, profile spec.
+- [x] **U0.2** In the ADR, define the canonical abstract contract (§7.3) and profile fields (§7.4) as the spec the rest of the work implements against.
 
 #### Phase U1 — Shared core skeleton (new top-level package `aml_detection/`)
 - [ ] **U1.1** Create `aml_detection/` package (`__init__.py`); decide import boundary (no dagster/psycopg2 at import time — pass connections in).
@@ -269,8 +269,8 @@ Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests au
 - [ ] **U1.5** `aml_detection/alerts.py`: `AlertSink` — schema-qualified insert adapter that handles the column-superset diff (`ag_catalog.alerts` has extra `alert_type`/`ml_typology`/`window_*`; `core.alerts` does not) by inserting only columns the target table exposes.
 
 #### Phase U4 — Prereq: normalise aml_network timestamps to epoch (enables unified time-window rules)
-- [ ] **U4.1** Migrate `aml_platform/etl/graph_loader.py` to project `ts` (epoch) on `Transfer` edges alongside the existing ISO `timestamp` (mirror what tap_and_go already does). Additive — keep `timestamp` for back-compat.
-- [ ] **U4.2** Back-fill note: existing aml_network edges need re-projection (`run_graph_promotion()` re-run) to gain `ts`; document in the runbook.
+- [x] **U4.1** Migrate `aml_platform/etl/graph_loader.py` to project `ts` (epoch) on `Transfer` edges alongside the existing ISO `timestamp` (mirror what tap_and_go already does). Additive — keep `timestamp` for back-compat.
+- [ ] **U4.2** Back-fill note: existing aml_network edges need re-projection (`run_graph_promotion()` re-run) to gain `ts`; document in the runbook. *(code migration done; back-fill is an operational runbook step — see U7.2)*
 
 #### Phase U2 — Canonical registry + renderer
 - [ ] **U2.1** `aml_detection/registry.py`: merge the 7 aml_network + 4 tap_and_go scenarios into ONE abstract registry, **deduplicating** the overlaps (Structuring, Circular, Rapid Movement exist in both → become single abstract scenarios rendered per profile). Add `requires_capabilities` to scenarios that need the party dimension (Cross-Rail).
