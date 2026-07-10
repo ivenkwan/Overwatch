@@ -48,29 +48,29 @@ def update_age_graph() -> None:
         END LOOP;
         
         -- 3. Create Transaction Edges
-        FOR t IN SELECT txn.txn_hash, txn.customer_num, txn.counterparty_id, txn.cdi_code, txn.txn_amount_in_hkd, cp_tab.is_merchant AS is_merchant
+        FOR t IN SELECT txn.txn_hash, txn.customer_num, txn.counterparty_id, txn.cdi_code, txn.txn_amount_in_hkd, cp_tab.is_merchant AS is_merchant, COALESCE(EXTRACT(EPOCH FROM txn.txn_date)::bigint, 0) AS ts_epoch
                  FROM core.transactions txn
                  JOIN core.counterparties cp_tab ON txn.counterparty_id = cp_tab.counterparty_id LOOP
-            
+
             IF t.cdi_code = 'D' THEN
                 -- Debit: Customer -> Counterparty/Merchant
                 IF t.is_merchant THEN
-                    EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$ 
+                    EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$
                         MATCH (src:Customer {id: ''%s''}), (dst:Merchant {id: ''%s''})
-                        MERGE (src)-[e:PAID {txn_hash: ''%s'', amount: %s}]->(dst)
-                    $cypher$) AS (a agtype);', t.customer_num, t.counterparty_id, t.txn_hash, t.txn_amount_in_hkd);
+                        MERGE (src)-[e:PAID {txn_hash: ''%s'', amount: %s}]->(dst) SET e.ts = %s
+                    $cypher$) AS (a agtype);', t.customer_num, t.counterparty_id, t.txn_hash, t.txn_amount_in_hkd, t.ts_epoch);
                 ELSE
-                    EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$ 
+                    EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$
                         MATCH (src:Customer {id: ''%s''}), (dst:Counterparty {id: ''%s''})
-                        MERGE (src)-[e:TRANSFERRED {txn_hash: ''%s'', amount: %s}]->(dst)
-                    $cypher$) AS (a agtype);', t.customer_num, t.counterparty_id, t.txn_hash, t.txn_amount_in_hkd);
+                        MERGE (src)-[e:TRANSFERRED {txn_hash: ''%s'', amount: %s}]->(dst) SET e.ts = %s
+                    $cypher$) AS (a agtype);', t.customer_num, t.counterparty_id, t.txn_hash, t.txn_amount_in_hkd, t.ts_epoch);
                 END IF;
             ELSE
                 -- Credit: Counterparty -> Customer
-                EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$ 
+                EXECUTE format('SELECT * FROM cypher(''tap_and_go_network'', $cypher$
                     MATCH (src:Counterparty {id: ''%s''}), (dst:Customer {id: ''%s''})
-                    MERGE (src)-[e:TRANSFERRED {txn_hash: ''%s'', amount: %s}]->(dst)
-                $cypher$) AS (a agtype);', t.counterparty_id, t.customer_num, t.txn_hash, t.txn_amount_in_hkd);
+                    MERGE (src)-[e:TRANSFERRED {txn_hash: ''%s'', amount: %s}]->(dst) SET e.ts = %s
+                $cypher$) AS (a agtype);', t.counterparty_id, t.customer_num, t.txn_hash, t.txn_amount_in_hkd, t.ts_epoch);
             END IF;
         END LOOP;
     END

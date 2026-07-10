@@ -191,3 +191,18 @@ Neither live Postgres+AGE nor a Dagster daemon was available here. All modules c
 ### 6.4 Open: unify the two ETL/graph systems
 
 `aml_platform` (`aml_network`, USD, `Entity`/`Transfer`) and `etl/` Dagster (`tap_and_go_network`, HKD, `Customer`/`Counterparty`) are parallel implementations of the same product. Consolidating them — one graph schema, one rail/currency-aware scenario registry — is the strategic follow-up that would let a single detection engine serve both. Tracked, not started.
+
+### 6.5 Timestamp-gap closure — velocity & rapid-movement land (2026-07-10)
+
+Closes the §6.2 limitation (tap_and_go edges lacked timestamps, so only amount/topology rules were expressible).
+
+| Item | Artifact | Status |
+|---|---|---|
+| Project `ts` onto edges | [etl/assets/graph_projection.py](../etl/assets/graph_projection.py) + [etl/daily_pipeline.py](../etl/daily_pipeline.py) `update_graph_model` | done — PAID/TRANSFERRED edges now carry `ts = EXTRACT(EPOCH FROM txn_date)::bigint` (COALESCE 0). Minimal-risk: the proven MERGE pattern `{txn_hash, amount}` is preserved and `SET e.ts = %s` appends the epoch, so existing edges are updated, not duplicated |
+| Rapid-movement rule | `TG_SCN_RAPID_MVMT_01` in [etl/detection.py](../etl/detection.py) | done — Customer receiving funds then forwarding ≥90% within 24h, windowed on projected `ts` |
+| Velocity rule | `TG_SCN_VELOCITY_BURST_01` | done — SQL window: ≥10 payments totaling ≥HKD 50k in any trailing 1h window over `core.transactions.txn_date` |
+| Contract tests | [etl/test_detection.py](../etl/test_detection.py) | done — **9/9 passing** |
+
+tap_and_go detection is now 4 scenarios (Structuring, Circular, Rapid Movement, Velocity Burst); `RULE_VERSION` bumped to `2026.07-tap-and-go-detection-2`.
+
+NOTE: the velocity rule is an **absolute burst**, not baseline-relative — the v5 `SCN_VELOCITY_01` ("3× count or 5× amount vs a 90-day baseline") still needs a `customer_behaviour_baseline` table (not built). Same verification caveat as §6.3: not live-fired here.
