@@ -206,3 +206,105 @@ Closes the §6.2 limitation (tap_and_go edges lacked timestamps, so only amount/
 tap_and_go detection is now 4 scenarios (Structuring, Circular, Rapid Movement, Velocity Burst); `RULE_VERSION` bumped to `2026.07-tap-and-go-detection-2`.
 
 NOTE: the velocity rule is an **absolute burst**, not baseline-relative — the v5 `SCN_VELOCITY_01` ("3× count or 5× amount vs a 90-day baseline") still needs a `customer_behaviour_baseline` table (not built). Same verification caveat as §6.3: not live-fired here.
+
+---
+
+## 7. Unification — one rail/currency-aware detection engine for both graphs
+
+**Status: PLANNED (not started).** This section is the atomic build plan for the §6.4 follow-up. No code is written in this pass — this is the breakdown.
+
+### 7.1 Goal & strategy decision
+
+Goal: a **single scenario registry + execution engine** that serves BOTH physical graphs (`aml_network` and `tap_and_go_network`), so detection logic is authored once and tuned in one place.
+
+**Decision — Option A: profile-abstracted shared core; both physical graphs remain.** The engine renders concrete Cypher per graph via a *profile* that maps a canonical abstract schema onto each graph's labels/properties, and a *currency resolver* normalizes thresholds. **Rejected — Option B** (migrate to one canonical physical graph): high migration risk, requires re-projecting all historical data and reconciling node identity (`Entity` ↔ `Customer`/`Counterparty`/`Merchant`); deferred until a federated/single-DB need materialises.
+
+Rationale: matches the stated intent ("one engine serves both graphs"), non-invasive (no historical data migration), incremental, reversible. Each engine run still targets **one** graph/DB — cross-graph/federated detection is explicitly out of scope (would need a single DB = Option B).
+
+### 7.2 Current divergences (the contract the abstraction must span)
+
+| Dimension | aml_network (aml_platform) | tap_and_go_network (Dagster) |
+|---|---|---|
+| DB | `aml_platform` @ localhost:5432 | `age_prod_01` @ age_db:5432 |
+| Node labels | `Entity`, `SuperNode`, `Party` | `Customer`, `Counterparty`, `Merchant` |
+| Edge labels | `Transfer` | `PAID`, `TRANSFERRED` |
+| Amount prop | `amount_usd` (USD) | `amount` (HKD) |
+| Timestamp prop | `timestamp` (ISO string) | `ts` (epoch seconds) |
+| Ref prop | `ref_id` | `txn_hash` |
+| Rail prop | `system` (FIAT/chain) + `asset` | none (all FIAT) |
+| Party/UBO | yes (`Party`, `OWNED_BY`, `UBO_OF`) | no |
+| Alert sink | `ag_catalog.alerts` (+ v5 cols) | `core.alerts` |
+| Scenarios | 7 (`scenarios.py`) | 4 (`detection.py`) |
+
+### 7.3 Canonical abstract contract (the registry is authored against this)
+
+- Abstract node **`Account`** → mapped by profile to concrete label(s) (incl. label-unions like `Customer|Counterparty|Merchant`). Role distinctions (customer/merchant/wallet) carried as a property where the graph keeps them.
+- Abstract edge **`Transfer`** with normalised properties: `value` (numeric), `ts` (epoch seconds), `ref` (id), optional `asset`, optional `rail`.
+- Optional **party dimension**: `Party` + `owns` / `ubo_of` edges (capability-gated — present only on profiles that have it).
+
+### 7.4 GraphProfile spec (dataclass)
+
+`name`, `graph_name`, db connection; `account_label`, `transfer_label`; `prop_value`, `base_ccy`; `prop_ts` (+ `ts_is_epoch`); `prop_ref`; `prop_rail` (or constant); `capabilities{has_party, party_label, owns_label, ubo_label}`; `alert_table` (schema-qualified).
+
+- **aml_network**: `account_label="Entity|SuperNode"`, `transfer_label="Transfer"`, `prop_value="amount_usd"`, `base_ccy="USD"`, `prop_ts="ts"` *(after U4)*, `prop_ref="ref_id"`, `prop_rail="system"`, `has_party=True`, `alert_table="ag_catalog.alerts"`.
+- **tap_and_go**: `account_label="Customer|Counterparty|Merchant"`, `transfer_label="PAID|TRANSFERRED"`, `prop_value="amount"`, `base_ccy="HKD"`, `prop_ts="ts"`, `prop_ref="txn_hash"`, `prop_rail="FIAT"` (constant), `has_party=False`, `alert_table="core.alerts"`.
+
+### 7.5 Currency handling decision
+
+Default: **per-currency thresholds** via a `CurrencyResolver` — a scenario declares thresholds keyed by currency, the profile selects its currency's value. Robust, no FX dependency, no in-query math. Optional future enhancement: an FX normaliser to a base HKD once an FX source exists (interface reserved, not built in the first increment).
+
+### 7.6 Atomic task breakdown
+
+Sequencing: **U0 → (U1 ∥ U4) → U2 → U3 → U5 → U7**, with U6 tests authored alongside each phase (test-first where feasible).
+
+#### Phase U0 — Decide & document (no code)
+- [ ] **U0.1** Write ADR `docs/adr/0001-unified-detection-engine.md`: record Option A chosen, Option B rejected (with reasons), the abstract contract, profile spec.
+- [ ] **U0.2** In the ADR, define the canonical abstract contract (§7.3) and profile fields (§7.4) as the spec the rest of the work implements against.
+
+#### Phase U1 — Shared core skeleton (new top-level package `aml_detection/`)
+- [ ] **U1.1** Create `aml_detection/` package (`__init__.py`); decide import boundary (no dagster/psycopg2 at import time — pass connections in).
+- [ ] **U1.2** `aml_detection/contract.py`: enums (`Category`, `Rail`, `Severity`, `Currency`), `Scenario` dataclass, `GraphProfile` dataclass, `Capabilities` dataclass.
+- [ ] **U1.3** `aml_detection/currency.py`: `CurrencyResolver` (per-currency threshold lookup + reserved FX-hook) with unit tests.
+- [ ] **U1.4** `aml_detection/profiles/aml_network.py` + `tap_and_go.py`: instantiate the two `GraphProfile` objects.
+- [ ] **U1.5** `aml_detection/alerts.py`: `AlertSink` — schema-qualified insert adapter that handles the column-superset diff (`ag_catalog.alerts` has extra `alert_type`/`ml_typology`/`window_*`; `core.alerts` does not) by inserting only columns the target table exposes.
+
+#### Phase U4 — Prereq: normalise aml_network timestamps to epoch (enables unified time-window rules)
+- [ ] **U4.1** Migrate `aml_platform/etl/graph_loader.py` to project `ts` (epoch) on `Transfer` edges alongside the existing ISO `timestamp` (mirror what tap_and_go already does). Additive — keep `timestamp` for back-compat.
+- [ ] **U4.2** Back-fill note: existing aml_network edges need re-projection (`run_graph_promotion()` re-run) to gain `ts`; document in the runbook.
+
+#### Phase U2 — Canonical registry + renderer
+- [ ] **U2.1** `aml_detection/registry.py`: merge the 7 aml_network + 4 tap_and_go scenarios into ONE abstract registry, **deduplicating** the overlaps (Structuring, Circular, Rapid Movement exist in both → become single abstract scenarios rendered per profile). Add `requires_capabilities` to scenarios that need the party dimension (Cross-Rail).
+- [ ] **U2.2** `aml_detection/render.py`: the renderer — abstract scenario + profile + resolved params/currency → concrete Cypher (substitute `account_label`, `transfer_label`, `prop_value`, `prop_ts`, `prop_ref`, `graph_name`; apply per-currency threshold).
+- [ ] **U2.3** Capability gating: scenario declares `requires_capabilities` (e.g. `PARTY_DIMENSION`); engine skips with a guidance log when the profile lacks it (generalises the aml_network-only label gate from §6.1).
+
+#### Phase U3 — Unified engine
+- [ ] **U3.1** `aml_detection/engine.py`: `detect(profile, conn)` — introspect graph capabilities (labels), iterate registry, render per profile, gate, execute, sink via `AlertSink`; return a run summary. No dagster/psycopg2 imports at module top (connection passed in).
+- [ ] **U3.2** Per-rule error isolation (rollback + log + continue) — port the pattern both existing engines already use.
+
+#### Phase U5 — Wire both consumers to the shared engine
+- [ ] **U5.1** aml_platform: rewrite `aml_platform/etl/rule_engine.py` to call `aml_detection.engine.detect(AML_NETWORK_PROFILE, conn)`; reduce `scenarios.py`/`typologies.py` to back-compat shims.
+- [ ] **U5.2** Dagster: rewrite `etl/detection.py` `run_typology_detection` to call `aml_detection.engine.detect(TAP_AND_GO_PROFILE, conn)`; keep the Dagster job/schedule wrapper intact.
+- [ ] **U5.3** Packaging: make `aml_detection/` importable from the Dagster container (update `etl/Dockerfile` COPY + requirements) and from the aml_platform venv.
+
+#### Phase U6 — Tests (authored alongside each phase; collected here)
+- [ ] **U6.1** `test_contract.py`: `Scenario`/`GraphProfile`/`Capabilities` invariants (required fields, enum validity, unique codes).
+- [ ] **U6.2** `test_currency.py`: per-currency resolution + FX-hook behaviour.
+- [ ] **U6.3** `test_render.py`: **snapshot** concrete Cypher per profile (aml_network + tap_and_go) for every scenario; assert well-formed + correct label/property/currency substitution. This is where AGE label-union support gets proven out.
+- [ ] **U6.4** `test_engine.py`: engine over a fake cursor — capability gating fires, per-rule isolation, alert sinking through both `AlertSink` variants.
+- [ ] **U6.5** `test_profiles.py`: each profile resolves every abstract field (no missing props); currency/threshold coverage for each scenario the profile will run.
+- [ ] **U6.6** Regression: port/keep the existing 18 (aml_platform) + 9 (tap_and_go) contract tests green against the shims, or migrate them into `aml_detection/tests/`.
+
+#### Phase U7 — Deprecation, runbook, closeout
+- [ ] **U7.1** Deprecation warnings on `aml_platform/etl/scenarios.py`, `typologies.py`, `etl/detection.py` pointing at `aml_detection`.
+- [ ] **U7.2** Migration runbook: no data migration (Option A); deploy shared package, re-point engines, re-project aml_network edges for `ts` (U4.2), verify per §5.4/§6.3 on both graphs.
+- [ ] **U7.3** Update this section with a completion log + mark §6.4 resolved.
+
+#### Phase U8 — Out-of-scope, documented (future)
+- [ ] **U8.1** Document that cross-graph/federated detection is out of scope (each run targets one graph/DB); a federated single-DB view is the deferred Option B milestone.
+
+### 7.7 Risks & open questions
+- **AGE label-union `(A|B|C)` support is unverified** — the tap_and_go profile depends on it; U2.2/U6.3 must confirm against a live AGE instance (fallback: the profile expands to a UNION of per-label queries).
+- **aml_network ISO→epoch `ts` migration (U4)** changes `graph_loader.py`; existing edges must be re-projected — coordinate the runbook.
+- **AGE `MERGE … SET` semantics** — already flagged in earlier phases; carried forward.
+- **Dagster container packaging (U5.3)** — the shared package must be on the image path; verify the COPY + import in the Dagster run.
+- **Currency** — per-currency thresholds are the pragmatic default; revisit if an FX source appears and a single HKD-normalised threshold is preferred.
