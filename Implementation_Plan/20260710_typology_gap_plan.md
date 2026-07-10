@@ -153,3 +153,41 @@ Cypher correctness could **not** be live-fired here — no Docker/Postgres+AGE r
 2. Apply init scripts in order (01–05), then load demo data (`etl/run_demo_demo.py` or `reload_env_and_demo.py`).
 3. `python etl/rule_engine.py` and confirm 6 scenarios execute; check `SELECT alert_type, severity, scenario_code FROM ag_catalog.alerts;` — expect rows for the seeded circular / smurfing patterns and **no** unhandled rule errors in the log.
 4. Tune a threshold via env (`SMURFING_TOTAL_USD=8000 python etl/rule_engine.py`) and confirm the alert count changes — proving the param thread-through end to end.
+
+---
+
+## 6. Execution log — Part 2: party/UBO dimension + Dagster T+1 (2026-07-10)
+
+### 6.1 Party/UBO dimension (unblocks 1.2 Cross-Rail Layering)
+
+| Item | Artifact | Status |
+|---|---|---|
+| Party/UBO relational model + graph labels | [init-scripts/06-party-ubo-model.sql](../aml_platform/init-scripts/06-party-ubo-model.sql) | done — `party` / `party_instrument` / `party_ubo` + `Party`/`OWNED_BY`/`UBO_OF` labels + seed |
+| Graph projection | [etl/party_loader.py](../aml_platform/etl/party_loader.py) | done — projects Party vertices, `OWNED_BY` (Entity→Party), `UBO_OF` (Party→Party) into aml_network |
+| Cross-Rail scenario | `SCN_CROSS_RAIL_LAYER_01` in [scenarios.py](../aml_platform/etl/scenarios.py) | done — stablecoin inflow → fiat outflow, same UBO within 48h via `OWNED_BY` + `UBO_OF*0..3`; `CROSS_RAIL_WINDOW_SECONDS` / `CROSS_RAIL_STABLECOINS` params |
+| Label gating | [rule_engine.py](../aml_platform/etl/rule_engine.py) | done — queries `ag_catalog.ag_label`, skips scenarios whose `requires_labels` are absent (logs guidance instead of erroring) |
+| Tests | [test_scenarios.py](../aml_platform/etl/test_scenarios.py) | done — **18/18 passing** (+3 for Cross-Rail) |
+
+Cross-Rail now degrades gracefully: it is skipped with a clear log line until `06` + `party_loader.py` run, then activates automatically. The original §5.2 "1.2 BLOCKED" is resolved.
+
+### 6.2 Dagster T+1 detection (Phase 5 first increment)
+
+**Key finding: the root `etl/` Dagster pipeline is a SEPARATE system from `aml_platform/etl/`.** Different database (`age_prod_01` vs `aml_platform`), different graph (`tap_and_go_network` with `Customer`/`Merchant`/`Counterparty` + `PAID`/`TRANSFERRED`, HKD — vs `aml_network` `Entity`/`Transfer`, USD). The aml_network scenarios **cannot** run against the Dagster-populated graph. So Phase 5 detection is implemented native to `tap_and_go`, as a parallel detection engine.
+
+| Item | Artifact | Status |
+|---|---|---|
+| Alert sink (tap_and_go DB) | [etl/sql/alerts_schema.sql](../etl/sql/alerts_schema.sql) | done — `core.alerts`, v5-shaped |
+| Detection module | [etl/detection.py](../etl/detection.py) | done — 2 tap_and_go-native scenarios (Structuring sub-HKD-8k; Circular Customer→Counterparty→Customer) + `run_typology_detection` op + `t1_detection_job` + `t1_detection_schedule` (cron `30 0 * * *`) |
+| Registration | [etl/repo.py](../etl/repo.py) | done — job + schedule registered |
+
+The detection schedule is **decoupled from the file-gated ingest job** — it runs nightly at 00:30 (after the 00:00 ingest+graph, within the v5 T+1 window) whether or not a new file arrived, so alerts are produced every T+1. The original §5.2 "Phase 5 — separate migration" has its first increment.
+
+**Limitation:** `tap_and_go` edges project only `{txn_hash, amount}` — no timestamp — so only amount/topology rules are expressible today. Velocity & rapid-movement require projecting `core.transactions.txn_date` onto edges (follow-up).
+
+### 6.3 Verification caveat (Part 2)
+
+Neither live Postgres+AGE nor a Dagster daemon was available here. All modules compile; contract tests 18/18; Cypher rendered and inspected for both engines. Before production: apply `06` + `alerts_schema.sql`, run `party_loader.py` then `rule_engine.py` (aml_platform); and bring up the Dagster daemon to confirm `t1_detection_schedule` fires and `core.alerts` populates (extend the §5.4 procedure to both systems).
+
+### 6.4 Open: unify the two ETL/graph systems
+
+`aml_platform` (`aml_network`, USD, `Entity`/`Transfer`) and `etl/` Dagster (`tap_and_go_network`, HKD, `Customer`/`Counterparty`) are parallel implementations of the same product. Consolidating them — one graph schema, one rail/currency-aware scenario registry — is the strategic follow-up that would let a single detection engine serve both. Tracked, not started.

@@ -156,6 +156,39 @@ def test_legacy_typologies_shim_matches_registry():
         assert t["severity"] in SEVERITIES
 
 
+# ---- Cross-Rail Layering (Part 1: party/UBO prerequisite) -----------------
+
+def test_cross_rail_scenario_present_and_gated():
+    s = next((x for x in SCENARIOS if x["name"] == "CROSS_RAIL_LAYERING"), None)
+    assert s is not None, "Cross-Rail Layering scenario not in registry"
+    # Must declare the Party label dependency so rule_engine skips it with
+    # guidance until the party/UBO dimension is projected (graceful degrade).
+    assert s.get("requires_labels") == ("Party",), "Cross-Rail must gate on the Party label"
+    q = render_query(s, DEFAULT_PARAMS)
+    assert "OWNED_BY" in q and "UBO_OF*0..3" in q, f"query missing party/UBO traversal:\n{q}"
+    # Param fully resolved — no builder artifacts in the rendered string.
+    assert "CROSS_RAIL_WINDOW_SECONDS" not in q and "_fmt(" not in q
+
+
+def test_cross_rail_renders_stablecoin_list_and_48h_window():
+    s = next(x for x in SCENARIOS if x["name"] == "CROSS_RAIL_LAYERING")
+    q = render_query(s, DEFAULT_PARAMS)
+    for ticker in DEFAULT_PARAMS["CROSS_RAIL_STABLECOINS"]:
+        assert "'" + ticker + "'" in q, f"stablecoin {ticker} not rendered in query"
+    # 48h window (172800s) threaded from params.
+    assert "172800" in q
+    # Targets the FIAT rail via the system property (literal braces preserved).
+    assert "{system: 'FIAT'}" in q
+
+
+def test_cross_rail_param_override_changes_window():
+    s = next(x for x in SCENARIOS if x["name"] == "CROSS_RAIL_LAYERING")
+    tuned = dict(DEFAULT_PARAMS)
+    tuned["CROSS_RAIL_WINDOW_SECONDS"] = 86400  # 24h
+    q = render_query(s, tuned)
+    assert "86400" in q and "172800" not in q
+
+
 # ---- standalone runner -----------------------------------------------------
 
 if __name__ == "__main__":

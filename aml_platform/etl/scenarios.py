@@ -68,6 +68,9 @@ DEFAULT_PARAMS = {
     "RAPID_LAYER_MIN_HOPS": 3,
     "RAPID_LAYER_MAX_HOPS": 6,
     "RAPID_LAYER_GAP_SECONDS": 3600,  # <= 1h between consecutive hops
+    # Cross-rail layering (stablecoin inflow -> fiat outflow, same UBO, within window)
+    "CROSS_RAIL_WINDOW_SECONDS": 172800,  # 48h (v5 spec SCN_CROSS_RAIL_LAYER_01)
+    "CROSS_RAIL_STABLECOINS": ("USDT", "USDC", "DAI", "BUSD", "USDS"),
 }
 
 
@@ -174,6 +177,30 @@ def _q_rapid_layering(cfg):
     )
 
 
+def _q_cross_rail_layering(cfg):
+    # Cross-rail layering: stablecoin inflow to a wallet followed by fiat
+    # outflow from a fiat account controlled by the SAME beneficial owner,
+    # within the window. REQUIRES the party/UBO graph dimension
+    # (init-scripts/06-party-ubo-model.sql + etl/party_loader.py); rule_engine
+    # skips this scenario with guidance until the 'Party' label is present.
+    # Plain string concatenation (no f-strings) so Cypher's {system:'FIAT'}
+    # property map and the [:UBO_OF*0..3] braces stay literal.
+    stablecoins = ", ".join("'" + s + "'" for s in cfg["CROSS_RAIL_STABLECOINS"])
+    return (
+        "SELECT * FROM cypher('aml_network', $$\n"
+        "    MATCH (wallet:Entity)<-[tin:Transfer]-(src:Entity)\n"
+        "    WHERE tin.asset IN [" + stablecoins + "]\n"
+        "    MATCH (wallet)-[:OWNED_BY]->(:Party)-[:UBO_OF*0..3]->(ubo:Party)\n"
+        "    MATCH (fiat:Entity {system: 'FIAT'})-[tout:Transfer]->(dst:Entity)\n"
+        "    MATCH (fiat)-[:OWNED_BY]->(:Party)-[:UBO_OF*0..3]->(ubo)\n"
+        "    WHERE tout.timestamp - tin.timestamp >= 0\n"
+        "      AND tout.timestamp - tin.timestamp < " + _fmt(cfg["CROSS_RAIL_WINDOW_SECONDS"]) + "\n"
+        "      AND wallet.id <> fiat.id\n"
+        "    RETURN ubo.id AS entity_id, collect(DISTINCT tin.ref_id) + collect(DISTINCT tout.ref_id) AS tx_hashes\n"
+        "$$) as (entity_id agtype, tx_hashes agtype);\n"
+    )
+
+
 # ---------------------------------------------------------------------------
 # The registry. Order = execution order. ``name`` is the historical alert_type
 # (kept stable for back-compat); ``code`` is the stable v5 scenario identifier.
@@ -240,6 +267,22 @@ SCENARIOS = [
         "severity": "CRITICAL",
         "description": "3+ hop chain of rapid-succession transfers (long chain of intermediaries).",
         "build_query": _q_rapid_layering,
+    },
+    {
+        "code": "SCN_CROSS_RAIL_LAYER_01",
+        "name": "CROSS_RAIL_LAYERING",
+        "category": "LAYERING",
+        "rail": "BOTH",
+        "mode": "BATCH",
+        "severity": "CRITICAL",
+        "description": "Stablecoin inflow to a wallet followed by fiat outflow from a fiat account "
+                       "under the same beneficial owner within 48h. The v5 platform's headline "
+                       "differentiator. REQUIRES the party/UBO dimension (init 06 + party_loader).",
+        "build_query": _q_cross_rail_layering,
+        # rule_engine.py skips scenarios whose required graph labels are absent,
+        # logging guidance instead of erroring, so this degrades gracefully until
+        # the party dimension is projected.
+        "requires_labels": ("Party",),
     },
 ]
 

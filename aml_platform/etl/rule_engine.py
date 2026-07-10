@@ -66,7 +66,23 @@ def execute_rules_and_sink_alerts():
         cur.execute("LOAD 'age';")
         cur.execute("SET search_path = ag_catalog, public;")
 
+        # Graph labels present in aml_network — used to gate scenarios that
+        # depend on optional dimensions (e.g. Party/UBO for Cross-Rail).
+        cur.execute("SELECT name FROM ag_catalog.ag_label;")
+        graph_labels = {row[0] for row in cur.fetchall()}
+
         for scenario in SCENARIOS:
+            required = scenario.get("requires_labels") or ()
+            missing = [lbl for lbl in required if lbl not in graph_labels]
+            if missing:
+                logger.info(
+                    "Skipping %s [%s] — graph labels not present: %s "
+                    "(apply the matching init script + loader, e.g. "
+                    "06-party-ubo-model.sql + party_loader.py)",
+                    scenario["name"], scenario["code"], missing,
+                )
+                continue
+
             query = render_query(scenario, params)
             logger.info("Executing Rule Strategy: %s [%s] (%s/%s)",
                         scenario["name"], scenario["code"], scenario["rail"], scenario["mode"])
