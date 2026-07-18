@@ -12,12 +12,18 @@ regardless of whether a new ingest file arrived (the ingest daily_update_job
 is file-gated and skips no-file days). Scheduled at 00:30 — after the 00:00
 ingest+graph, inside the v5 T+1 window 00:00-06:00 HKT.
 
-LIMITATION (honesty): tap_and_go edges currently project only {txn_hash,
-amount} — no timestamp — so only amount/topology rules are expressible on the
-graph today. Velocity & rapid-movement require projecting core.transactions.
-txn_date onto edges; tracked as follow-up. Cypher correctness could not be
-live-fired here (no Docker/Postgres+AGE runtime); verify per the plan's §5.4
-procedure before production.
+Each scenario is a SELECT returning (entity_id, tx_hashes); the op executes
+them uniformly. Cypher scenarios target tap_and_go_network (edges now carry
+{txn_hash, amount, ts} where ts = EXTRACT(EPOCH FROM txn_date), projected by
+graph_projection.py / daily_pipeline.py). SQL scenarios query
+core.transactions directly where window functions are cleaner (velocity).
+
+NOTE: SCN_VELOCITY_BURST_01 is absolute (>= N txns / >= HKD S in a 1h window),
+NOT baseline-relative — the v5 SCN_VELOCITY_01 ("3x count or 5x amount vs a
+90-day baseline") still needs a customer_behaviour_baseline table (not built).
+
+Cypher correctness could not be live-fired here (no Docker/Postgres+AGE
+runtime); verify per the plan's §5.4 procedure before production.
 """
 
 import os
@@ -26,9 +32,12 @@ import psycopg2
 from dagster import op, job, schedule, RunRequest, DefaultScheduleStatus
 
 POSTGRES_URI = os.getenv("POSTGRES_URI", "postgresql://postgres:password@age_db:5432/age_prod_01")
-RULE_VERSION = "2026.07-tap-and-go-detection"
+RULE_VERSION = "2026.07-tap-and-go-detection-2"
 
 # tap_and_go-native scenarios. Thresholds are HKD (tap_and_go is a HK fiat rail).
+# `kind` is documentary — every scenario is a SELECT returning (entity_id,
+# tx_hashes) and the op executes them uniformly. Cypher rules use the `ts`
+# epoch now projected onto edges; the SQL rule uses core.transactions.txn_date.
 SCENARIOS = [
     {
         "code": "TG_SCN_STRUCT_01",
@@ -36,6 +45,7 @@ SCENARIOS = [
         "category": "STRUCTURING",
         "rail": "FIAT",
         "severity": "HIGH",
+        "kind": "cypher",
         "description": "Customer making many sub-HKD-8k payments that aggregate past HKD 20k.",
         "query": (
             "SELECT * FROM cypher('tap_and_go_network', $$\n"
@@ -53,6 +63,7 @@ SCENARIOS = [
         "category": "CIRCULAR_FLOW",
         "rail": "FIAT",
         "severity": "CRITICAL",
+        "kind": "cypher",
         "description": "Funds leaving a Customer to a Counterparty and returning (round-tripping).",
         "query": (
             "SELECT * FROM cypher('tap_and_go_network', $$\n"
@@ -60,6 +71,51 @@ SCENARIOS = [
             "    WITH c, collect(DISTINCT e1.txn_hash) + collect(DISTINCT e2.txn_hash) AS hashes\n"
             "    RETURN c.id AS entity_id, hashes\n"
             "$$) as (entity_id agtype, tx_hashes agtype);\n"
+        ),
+    },
+    {
+        "code": "TG_SCN_RAPID_MVMT_01",
+        "name": "RAPID_MOVEMENT",
+        "category": "RAPID_MOVEMENT",
+        "rail": "FIAT",
+        "severity": "HIGH",
+        "kind": "cypher",
+        "description": "Customer receiving funds then forwarding >=90% of the received amount "
+                       "within 24h (mule pass-through). Uses the projected ts epoch for the window.",
+        "query": (
+            "SELECT * FROM cypher('tap_and_go_network', $$\n"
+            "    MATCH (cp:Counterparty)-[tin:TRANSFERRED]->(c:Customer)\n"
+            "    MATCH (c)-[tout:PAID|TRANSFERRED]->(dst)\n"
+            "    WHERE tout.ts >= tin.ts AND tout.ts - tin.ts < 86400\n"
+            "    WITH c, sum(tin.amount) AS in_total, sum(tout.amount) AS out_total,\n"
+            "         collect(DISTINCT tin.txn_hash) + collect(DISTINCT tout.txn_hash) AS hashes\n"
+            "    WHERE in_total > 0 AND out_total >= in_total * 0.90\n"
+            "    RETURN c.id AS entity_id, hashes\n"
+            "$$) as (entity_id agtype, tx_hashes agtype);\n"
+        ),
+    },
+    {
+        "code": "TG_SCN_VELOCITY_BURST_01",
+        "name": "VELOCITY_BURST",
+        "category": "VELOCITY",
+        "rail": "FIAT",
+        "severity": "HIGH",
+        "kind": "sql",
+        "description": "Customer with >= 10 payments totaling >= HKD 50k in any trailing 1h window "
+                       "(absolute burst; baseline-relative v5 SCN_VELOCITY_01 needs a baseline table).",
+        "query": (
+            "WITH windows AS (\n"
+            "    SELECT customer_num, txn_hash,\n"
+            "           COUNT(*) OVER w AS win_count,\n"
+            "           SUM(txn_amount_in_hkd) OVER w AS win_total\n"
+            "    FROM core.transactions\n"
+            "    WINDOW w AS (PARTITION BY customer_num ORDER BY txn_date\n"
+            "                 RANGE BETWEEN INTERVAL '1 hour' PRECEDING AND CURRENT ROW)\n"
+            ")\n"
+            "SELECT customer_num AS entity_id, array_agg(DISTINCT txn_hash) AS tx_hashes\n"
+            "FROM windows\n"
+            "WHERE win_count >= 10 AND win_total >= 50000\n"
+            "GROUP BY customer_num;\n"
         ),
     },
 ]
